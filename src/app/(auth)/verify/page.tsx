@@ -3,7 +3,7 @@ import React from 'react'
 function Verify() {
   return (
     <div>
-      Verify
+      Verify Page
     </div>
   )
 }
