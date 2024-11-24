@@ -1,18 +1,38 @@
-import mongoose, {Schema, ObjectId, Document} from 'mongoose'
-import { ExpenseInterface} from './Expense';
+import mongoose, {Schema, Document} from "mongoose";
 
+// creating an interface
+export interface Message extends Document{
+    _id: string;
+    content: string;
+    createdAt: Date;
+}
 
-export interface UserInterface extends Document{
+const MessageSchema: Schema<Message> = new Schema({
+    content: {
+        type: String,
+        required: true
+    },
+
+    createdAt: {
+        type: Date, 
+        required: true,
+        default: Date.now()
+    }
+})
+
+// creating an interface
+export interface User extends Document{
     username: string;
     email: string;
     password: string;
     verifyCode: string;
     verifyCodeExpiry: Date;
-    isVerified: boolean;
-    expenses: ObjectId[];
+    isVerified: boolean
+    isAcceptingMessages: boolean;
+    messages: Message[]
 }
 
-const UserSchema: Schema<UserInterface> = new Schema ({
+const UserSchema: Schema<User> = new Schema({
     username: {
         type: String,
         required: [true, "Username is required"],
@@ -21,7 +41,7 @@ const UserSchema: Schema<UserInterface> = new Schema ({
     },
 
     email: {
-        type: String,
+        type: String, 
         required: [true, "Email is required"],
         unique: true,
         match: [/.+\@.+\..+/,"Please use a valid email address"]  // regular expression to check email address
@@ -47,11 +67,15 @@ const UserSchema: Schema<UserInterface> = new Schema ({
         default: false
     },
 
-    expenses: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Expense'
-    }]
-}, {timestamps: true})
+    isAcceptingMessages: {
+        type: Boolean,
+        default: true
+    },
 
-const UserModel = (mongoose.models.User as mongoose.Model<UserInterface>) || mongoose.model<UserInterface>("User", UserSchema)
+    messages: [MessageSchema]
+})
+
+//                if the model already exists                       if models does not exists
+const UserModel = (mongoose.models.User as mongoose.Model<User>) || mongoose.model<User>("User", UserSchema)
+
 export default UserModel;
