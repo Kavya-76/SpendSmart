@@ -1,38 +1,17 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, {Schema,Document} from 'mongoose'
+import { ObjectId } from 'mongodb';
 
-// creating an interface
-export interface Message extends Document{
-    _id: string;
-    content: string;
-    createdAt: Date;
-}
-
-const MessageSchema: Schema<Message> = new Schema({
-    content: {
-        type: String,
-        required: true
-    },
-
-    createdAt: {
-        type: Date, 
-        required: true,
-        default: Date.now()
-    }
-})
-
-// creating an interface
 export interface User extends Document{
     username: string;
     email: string;
     password: string;
     verifyCode: string;
     verifyCodeExpiry: Date;
-    isVerified: boolean
-    isAcceptingMessages: boolean;
-    messages: Message[]
+    isVerified: boolean;
+    expenses: ObjectId[];
 }
 
-const UserSchema: Schema<User> = new Schema({
+const UserSchema: Schema<User> = new Schema ({
     username: {
         type: String,
         required: [true, "Username is required"],
@@ -41,7 +20,7 @@ const UserSchema: Schema<User> = new Schema({
     },
 
     email: {
-        type: String, 
+        type: String,
         required: [true, "Email is required"],
         unique: true,
         match: [/.+\@.+\..+/,"Please use a valid email address"]  // regular expression to check email address
@@ -67,15 +46,11 @@ const UserSchema: Schema<User> = new Schema({
         default: false
     },
 
-    isAcceptingMessages: {
-        type: Boolean,
-        default: true
-    },
+    expenses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Expense'
+    }]
+}, {timestamps: true})
 
-    messages: [MessageSchema]
-})
-
-//                if the model already exists                       if models does not exists
 const UserModel = (mongoose.models.User as mongoose.Model<User>) || mongoose.model<User>("User", UserSchema)
-
-export default UserModel;
+export default UserModel; 
