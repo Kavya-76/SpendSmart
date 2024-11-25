@@ -1,40 +1,108 @@
-import React from 'react'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import Link from 'next/link'
-import {IconBrandGithub, IconBrandGoogle} from "@tabler/icons-react"
+'use client';
 
-function Signin() {
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { signIn } from 'next-auth/react';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { signinSchema } from '@/schemas/signinSchema';
+
+export default function SignInForm() {
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof signinSchema>>({
+    resolver: zodResolver(signinSchema),
+    defaultValues: {
+      identifier: '',
+      password: '',
+    },
+  });
+
+  const { toast } = useToast();
+  const onSubmit = async (data: z.infer<typeof signinSchema>) => {
+    const result = await signIn('credentials', {
+      redirect: false,
+      identifier: data.identifier,
+      password: data.password,
+    });
+
+    if (result?.error) {
+      if (result.error === 'CredentialsSignin') {
+        toast({
+          title: 'Login Failed',
+          description: 'Incorrect username or password',
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive',
+        });
+      }
+    }
+
+    if (result?.url) {
+      router.replace('/home');
+    }
+  };
+
   return (
-    <div className='mt-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white border border-[#121212] dark:bg-black'>
-      <form className='my-8'>
-        <Label htmlFor='email'>Email Address</Label>
-        <Input id='email' placeholder='johndoe@gmail.com' type='email' name='email' />
-
-        <Label htmlFor='password'>Password</Label>
-        <Input id='password' placeholder='**********' type='password' name='password'></Input>
-
-        <button className='border border-black bg-black text-white'>Login &rarr;</button>
-
-        <p className='text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300'>
-        Don't have account? <Link href="/signup">Register</Link></p>
-
-        <section className='flex flex-col spate-y-4'>
-          <form>
-            <button className='border border-black bg-white'>
-              <IconBrandGithub className='h-4 w-4 text-neutral-800 dark:text-neutral-300'/>
-              <span className='text-neutral-700 dark:text-neutral-300 text-sm'>Github</span>
-            </button>
-
-            <button className='border border-black bg-white'>
-              <IconBrandGoogle className='h-4 w-4 text-neutral-800 dark:text-neutral-300'/>
-              <span className='text-neutral-700 dark:text-neutral-300 text-sm'>Google</span>
-            </button>
+    <div className="flex justify-center items-center min-h-screen bg-gray-800">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+            Welcome Back to Spend Smart
+          </h1>
+          <p className="mb-4">Sign in to continue</p>
+        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              name="identifier"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email/Username</FormLabel>
+                  <Input {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="password"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <Input type="password" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button className='w-full' type="submit">Sign In</Button>
           </form>
-        </section>
-      </form>  
+        </Form>
+        <div className="text-center mt-4">
+          <p>
+            Not a member yet?{' '}
+            <Link href="/signup" className="text-blue-600 hover:text-blue-800">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
-
-export default Signin

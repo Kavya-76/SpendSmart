@@ -1,4 +1,4 @@
-import NextAuth, { CredentialsSignin } from "next-auth";
+import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import dbConnect from "./lib/dbConfig";
 import UserModel from "./models/User";
@@ -10,23 +10,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: "Credentials",
 
       credentials: {
-        email: { label: "Email", type: "email" },
+        identifier: { label: "Email or Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
+
       authorize: async (credentials: any): Promise<any> => {
         await dbConnect();
         try {
           const user = await UserModel.findOne({
             $or: [
-              { email: credentials.identifier.email },
-              { username: credentials.identifier.username },
+              { email: credentials.identifier },
+              { username: credentials.identifier },
             ],
           });
+          // console.log(user);
           if (!user) {
             throw new Error("No user found with this email");
           }
 
-          if (user.isVerified) {
+          if (!user.isVerified) {
             throw new Error("Please verify your account before login");
           }
 
@@ -45,4 +47,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
+        token.username = user.username;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token._id;
+        session.user.isVerified = token.isVerified;
+        session.user.username = token.username;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/signin",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 });
