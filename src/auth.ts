@@ -73,3 +73,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
+
+
+/*
+signIn: async({user, account}) => {
+  if(account?.provider === "google"){
+    try{
+      const {email, name, image, id} = user;
+      await dbConnect();
+      const alreadyUser = await User.findOne({email})
+
+      if(!alreadyUser){
+        await User.create({email, name, image, authProviderId: id})
+      }else{
+        return true;
+      }
+    }catch(error){
+      throw new Error("Error while creating user")
+    }
+  }
+}
+*/
