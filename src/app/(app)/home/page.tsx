@@ -1,11 +1,7 @@
-import React from 'react'
-
-function Dashboard() {
+export default function HomePage() {
   return (
-    <div>
-      Home page
+    <div className="profile-page">
+      <h1>Your Profile</h1>
     </div>
-  )
+  );
 }
-
-export default Dashboard

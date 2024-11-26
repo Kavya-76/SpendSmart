@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { signIn, auth } from '@/auth';
+import { signIn } from 'next-auth/react';
 import {
   Form,
   FormField,
@@ -54,7 +54,7 @@ export default function SignInForm() {
     }
 
     if (result?.url) {
-      router.replace('/home');
+      router.replace('/dashboard');
     }
   };
 
