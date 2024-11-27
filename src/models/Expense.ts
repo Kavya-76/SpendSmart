@@ -1,7 +1,9 @@
 import mongoose, {Schema, ObjectId, Document} from 'mongoose'
 
 export interface ExpenseInterface extends Document {
+    type: string,
     createdBy: ObjectId;
+    title: string;
     category: 'Food' | 'Transport' | 'Shopping' | 'Utilities' | 'HealthCare' | 'Others';
     amount: number;
     description: string;
@@ -11,10 +13,24 @@ export interface ExpenseInterface extends Document {
 }
 
 const ExpenseSchema: Schema<ExpenseInterface> = new Schema({
+    type: {
+        type: String,
+        required: true,
+        enum: ["Income", "Expense"],
+        default: "Expense"
+    },
+
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+
+    title: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 50
     },
     
     category: {

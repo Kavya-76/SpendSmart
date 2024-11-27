@@ -16,11 +16,6 @@ export const customMiddleware = async (request: NextRequest) => {
                        path === '/signup' || 
                        path === '/verify'
 
-  console.log(token);
-  console.log(path);
-  console.log(username);
-  console.log("Public path:", isPublicPath);
-
   if (
     token &&
     (path === "/signin" || 
