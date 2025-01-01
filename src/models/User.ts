@@ -3,8 +3,8 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 export interface IUser extends Document {
   name?: string;
   email: string;
-  emailVerified?: boolean;
-  emailVerifiedExpiry: Date;
+  isVerified?: boolean;
+  verificationEmailExpiry: Date;
   password?: string;
   role: "USER" | "ADMIN";
   budgets: Types.ObjectId[];
@@ -26,15 +26,13 @@ const UserSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
     },
-    emailVerified: {
+    isVerified: {
       type: Boolean,
       default: false,
     },
-    emailVerifiedExpiry: {
+    verificationEmailExpiry: {
         type: Date,
-        required: [true, "Verification email expiry is required"]
     },
     role: {
       type: String,

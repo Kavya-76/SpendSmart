@@ -36,12 +36,13 @@ export const RegisterForm = () => {
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setError("");
     setSuccess("");
-
+    console.log("Form submitted")
     startTransition(() => {
       axios
         .post("/api/register", values)
         .then((response) => {
           const data = response.data;
+          console.log(data);
           if (data.error) {
             setError(data.error);
           } else if (data.success) {
