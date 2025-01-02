@@ -16,7 +16,7 @@ export const POST = async (req: Request) => {
       return Response.json(
         {
           success: false,
-          message: "User not found",
+          message: "Enter valid credentials",
         },
         { status: 500 }
       );

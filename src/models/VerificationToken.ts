@@ -33,5 +33,5 @@ const verificationTokenSchema: Schema<IVerificationToken> = new Schema(
 verificationTokenSchema.index({ email: 1, token: 1 }, { unique: true });
 
 // VerificationToken Model
-const VerificationTokenModel = (mongoose.models?.VerificationToken as mongoose.Model<IVerificationToken>) || mongoose.model<IVerificationToken>("User", verificationTokenSchema)
+const VerificationTokenModel = (mongoose.models?.VerificationToken as mongoose.Model<IVerificationToken>) || mongoose.model<IVerificationToken>("VerificationToken", verificationTokenSchema)
 export default VerificationTokenModel; 

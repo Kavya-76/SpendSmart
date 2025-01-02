@@ -4,9 +4,10 @@
  */
 export const publicRoutes = [
     "/",
-    "/auth/new-verification",
+    "/auth/verify-email",
     "/api/register",
-    "/api/login"
+    "/api/login",
+    "/api/verify-email"
 ]
 
 

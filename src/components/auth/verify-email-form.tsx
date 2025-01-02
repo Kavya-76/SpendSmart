@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";  // Import axios
 
-export const NewVerificationForm = () => {
+export const VerifyEmailForm = () => {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const searchParams = useSearchParams();
@@ -19,10 +19,12 @@ export const NewVerificationForm = () => {
       setError("Missing Token");
       return;
     }
-
+    
     axios
       .post("/api/verify-email", { token })
       .then((response) => {
+        console.log(response.data.success); 
+        
         setSuccess(response.data.success);
         setError(response.data.error);
       })
@@ -32,6 +34,8 @@ export const NewVerificationForm = () => {
   }, [token]);
 
   useEffect(() => {
+    console.log("Hello");
+    
     onSubmit();
   }, [onSubmit]);
 
