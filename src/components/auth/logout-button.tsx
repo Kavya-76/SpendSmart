@@ -2,21 +2,22 @@
 
 import React from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface LogoutButtonProps {
   children?: React.ReactNode;
 }
 
 const LogoutButton = ({ children }: LogoutButtonProps) => {
+  const router = useRouter();
   const onClick = async () => {
     try {
-      const response = await axios.post("/api/logout");
-      if (response.data.success) {
-        // Redirect the user after a successful logout
-        window.location.href = "/";
-      } else {
-        alert(response.data.error || "Logout failed. Please try again.");
-      }
+      await axios.post("/api/logout");
+      router.push("/");
+
+      // if (response.data.success) {
+      //   alert(response.data.error || "Logout failed. Please try again.");
+      // }
     } catch (error) {
       console.error("Logout error:", error);
       alert("An error occurred while logging out. Please try again.");

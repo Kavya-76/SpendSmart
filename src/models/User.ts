@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface IUser extends Document {
-  name?: string;
+  name: string;
   email: string;
-  isVerified?: boolean;
+  isVerified: boolean;
   verificationEmailExpiry: Date;
   password?: string;
   role: "USER" | "ADMIN";

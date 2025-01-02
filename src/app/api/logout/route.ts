@@ -1,20 +1,26 @@
-"use server";
 import { signOut } from "@/auth";
+import { NextResponse } from "next/server";
+
 export const POST = async (req: Request) => {
   try {
-    // Call the signOut function
-    await signOut();
+    // Clear authentication/session data
+    await signOut({redirect: false});
 
-    // Return a success response
-    return new Response(JSON.stringify({ success: true, message: "Logged out successfully." }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Return success response
+    return NextResponse.json(
+      {
+        success: "Logged out successfully",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error during logout:", error);
-    return new Response(JSON.stringify({ success: false, error: "Logout failed. Please try again." }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+
+    return NextResponse.json(
+      {
+        error: "Logout failed",
+      },
+      { status: 500 }
+    );
   }
 };
