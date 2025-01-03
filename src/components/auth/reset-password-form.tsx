@@ -1,6 +1,6 @@
 "use client";
 
-import { ResetSchema } from "@/schemas";
+import { ResetPasswordSchema } from "@/schemas";
 import * as z from "zod";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { useForm } from "react-hook-form";
@@ -21,21 +21,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-export const ResetForm = () => {
+export const ResetPasswordForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-  const form = useForm<z.infer<typeof ResetSchema>>({
-    resolver: zodResolver(ResetSchema),
+  const form = useForm<z.infer<typeof ResetPasswordSchema>>({
+    resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
       email: "",
     },
   });
 
   // Axios request function to call the /api/reset route
-  const resetPassword = async (values: z.infer<typeof ResetSchema>) => {
+  const resetPassword = async (values: z.infer<typeof ResetPasswordSchema>) => {
     try {
-      const response = await axios.post("/api/reset", { email: values.email });
+      const response = await axios.post("/api/reset-password", { email: values.email });
       if (response.data.success) {
         setSuccess(response.data.success);
         setError(""); // Clear any previous errors
@@ -50,7 +50,7 @@ export const ResetForm = () => {
     }
   };
 
-  const onSubmit = (values: z.infer<typeof ResetSchema>) => {
+  const onSubmit = (values: z.infer<typeof ResetPasswordSchema>) => {
     setError("");
     setSuccess("");
 

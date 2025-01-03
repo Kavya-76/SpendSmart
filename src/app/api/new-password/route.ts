@@ -2,85 +2,81 @@
 
 import * as z from "zod";
 import { NewPasswordSchema } from "@/schemas";
-import { getPasswordResetTokenByToken } from "@/data/password-reset-token";
-import { getUserByEmail } from "@/data/user";
-import { db } from "@/lib/db";
+import PasswordResetToken from "@/models/PasswordResetToken";
+import User from "@/models/User";
+import dbConnect from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
+  await dbConnect();
+
   try {
-    // Parse the request body
     const body = await req.json();
     const { values, token } = body;
 
     // Validate the token
     if (!token) {
-      return new Response(
-        JSON.stringify({ error: "Missing token!" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+      return NextResponse.json(
+        { error: "Missing token!" },
+        { status: 400 }
       );
     }
 
     // Validate the fields using Zod schema
     const validatedFields = NewPasswordSchema.safeParse(values);
     if (!validatedFields.success) {
-      return new Response(
-        JSON.stringify({ error: "Invalid fields!" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+      return NextResponse.json(
+        { error: "Invalid fields!" },
+        { status: 400 }
       );
     }
 
     const { password } = validatedFields.data;
 
     // Check if the reset token exists
-    const existingToken = await getPasswordResetTokenByToken(token);
+    const existingToken = await PasswordResetToken.findOne({ token });
     if (!existingToken) {
-      return new Response(
-        JSON.stringify({ error: "Invalid token" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+      return NextResponse.json(
+        { error: "Invalid token" },
+        { status: 400 }
       );
     }
 
     // Check if the reset token has expired
-    const hasExpired = new Date(existingToken.expires) < new Date();
-    if (hasExpired) {
-      return new Response(
-        JSON.stringify({ error: "Token has expired" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+    if (new Date(existingToken.expires) < new Date()) {
+      return NextResponse.json(
+        { error: "Token has expired" },
+        { status: 400 }
       );
     }
 
     // Verify if the associated user exists
-    const existingUser = await getUserByEmail(existingToken.email);
+    const existingUser = await User.findOne({ email: existingToken.email });
     if (!existingUser) {
-      return new Response(
-        JSON.stringify({ error: "Email does not exist" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+      return NextResponse.json(
+        { error: "Email does not exist" },
+        { status: 400 }
       );
     }
 
     // Hash the new password and update the user record
     const hashedPassword = await bcrypt.hash(password, 10);
-    await db.user.update({
-      where: { id: existingUser.id },
-      data: { password: hashedPassword },
-    });
+    existingUser.password = hashedPassword;
+    await existingUser.save();
 
     // Delete the used password reset token
-    await db.passwordResetToken.delete({
-      where: { id: existingToken.id },
-    });
+    await PasswordResetToken.deleteOne({ _id: existingToken._id });
 
-    // Return success response
-    return new Response(
-      JSON.stringify({ success: "Password updated!" }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+    return NextResponse.json(
+      { success: "Password updated!" },
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error updating password:", error);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
     );
   }
 };
