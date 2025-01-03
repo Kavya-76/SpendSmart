@@ -3,6 +3,8 @@ import { RegisterSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/db";
 import UserModel, { IUser } from "@/models/User"; // Import the Mongoose User model
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const POST = async (req: Request) => {
   await dbConnect(); // Connect to the database
@@ -44,15 +46,12 @@ export const POST = async (req: Request) => {
 
     await newUser.save(); // Save the new user to the database
 
-    return Response.json(
-      { success: "User created!" },
-      {status: 201}
-    );
-
+    
     // Optional: Send verification email
-    // const verificationToken = await generateVerificationToken(email);
-    // await sendVerificationEmail(verificationToken.email, verificationToken.token);
-    // return res.status(201).json({ success: "Confirmation email sent!" });
+    const verificationToken = await generateVerificationToken(email);
+    await sendVerificationEmail(verificationToken.email, verificationToken.token);
+    return Response.json({ success: "Confirmation email sent!" }, {status: 200});
+
   } catch (error) {
     console.error("Error in register API:", error);
     return Response.json(

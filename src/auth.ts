@@ -1,35 +1,46 @@
 import NextAuth from "next-auth";
+import { User, Account } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import dbConnect from "@/lib/db";
-import UserModel from "@/models/User";
 import { LoginSchema } from "./schemas";
-import { getUserById } from "./data/user";
 import { getUserByEmail } from "./data/user";
+import Github from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
+import { getUserById } from "./data/user";
+import UserModel, { IUser } from "./models/User";
+import dbConnect from "./lib/db";
+import axios from "axios";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    Github({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
     Credentials({
       credentials: {
-        email: {},
-        password: {},
+        email: {
+          label: "Email",
+          type: "text",
+          placeholder: "email@example.com",
+        },
+        password: { label: "Password", type: "password" },
       },
       authorize: async (credentials: any): Promise<any> => {
-        
-        const validatedFields = LoginSchema.safeParse(credentials)
-        if(validatedFields.success){
-          const {email, password} = validatedFields.data
+        const validatedFields = LoginSchema.safeParse(credentials);
+        if (validatedFields.success) {
+          const { email, password } = validatedFields.data;
 
           const user = await getUserByEmail(email);
-          if(!user || !user.password) return null;
+          if (!user || !user.password) return null;
 
-          const passwordsMatch = await bcrypt.compare(
-              password,
-              user.password
-          );
-
-          if(passwordsMatch){
-              return user;
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+          if (passwordsMatch) {
+            return user;
           }
         }
         return null;
@@ -37,11 +48,35 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, account }: { user: User; account: Account | null }) {
+      if (account?.provider !== "credentials") {
+        try {
+          await dbConnect();
+          const newUser: IUser = new UserModel({
+            name: user.name,
+            email: user.email,
+            isVerified: true,
+          });
+          await newUser.save(); // Save the new user to the database
+        } catch (error) {
+          console.log(error);
+          return false;
+        }
+        return true;
+      }
+
+      const existingUser = await getUserById(user.id!);
+
+      // To provide email signin without email verification
+      if (!existingUser?.isVerified) return false;
+
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
-        token._id = user._id?.toString();
-        token.isVerified = user.isVerified;
-        token.username = user.username;
+        token._id = user.id?.toString() || "";
+        token.isVerified = user.isVerified ?? false;
+        token.username = user.username ?? "";
       }
       return token;
     },
@@ -59,7 +94,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   pages: {
     signIn: "/auth/login",
-    error: "/auth/error"
+    error: "/auth/error",
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
