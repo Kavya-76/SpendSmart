@@ -58,7 +58,7 @@ const BudgetSchema: Schema<IBudget> = new Schema(
 
 // Create the Budget model, or use an existing one to avoid model overwriting errors
 const BudgetModel =
-  (mongoose.models.Budget as mongoose.Model<IBudget>) ||
+  (mongoose.models?.Budget as mongoose.Model<IBudget>) ||
   mongoose.model<IBudget>('Budget', BudgetSchema);
 
 export default BudgetModel;
