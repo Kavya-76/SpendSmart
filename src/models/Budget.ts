@@ -4,12 +4,23 @@ import mongoose, { Schema, ObjectId, Document } from 'mongoose';
 export interface IBudget extends Document {
   createdBy: ObjectId; 
   title: string;
-  category: 'Food' | 'Transport' | 'Shopping' | 'Utilities' | 'Healthcare' | 'Others'; 
   amount: number; 
   description?: string; 
   icon?: string;
   createdAt: Date; 
   updatedAt?: Date;
+}
+
+export interface IBudgetExtended extends Document {
+  createdBy: ObjectId; 
+  title: string;
+  amount: number; 
+  description?: string; 
+  icon?: string;
+  createdAt: Date; 
+  updatedAt?: Date;
+  totalSpend: Number;
+  totalItem: Number;
 }
 
 // Mongoose schema for Budget
@@ -25,11 +36,6 @@ const BudgetSchema: Schema<IBudget> = new Schema(
       required: true,
       trim: true,
       maxlength: 50,
-    },
-    category: {
-      type: String,
-      required: true,
-      enum: ['Food', 'Transport', 'Shopping', 'Utilities', 'Healthcare', 'Others'],
     },
     amount: {
       type: Number,

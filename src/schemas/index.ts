@@ -32,3 +32,14 @@ export const NewPasswordSchema = z.object({
         message: "Minimum 8 characters required"
     })
 })
+
+export const BudgetSchema = z.object({
+    title: z.string({
+        message: "Budget title is required"
+    }),
+    amount: z.number().min(0, {
+        message: "Budget amount must be at least 0"
+    }),
+    description: z.optional(z.string()),
+    icon: z.optional(z.string())
+});

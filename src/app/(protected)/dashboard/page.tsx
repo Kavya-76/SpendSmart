@@ -1,15 +1,16 @@
+"use client"
 import React from 'react'
-import { auth } from '@/auth'
+import { useCurrentUser } from '@/hooks/use-current-user'
 import LogoutButton from '@/components/auth/logout-button'
-
-const page = async () => {
-    const session = await auth()
+const Dashboard = () => {
+  const user = useCurrentUser();
   return (
     <div>
-      {JSON.stringify(session)}
+      {JSON.stringify(user)}
+      Dashboard
       <LogoutButton>Logout</LogoutButton>
     </div>
   )
 }
 
-export default page
+export default Dashboard

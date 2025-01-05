@@ -1,10 +1,10 @@
 import mongoose, { Schema, ObjectId, Document } from 'mongoose';
 
 // TypeScript interface for Expense
-export interface ExpenseInterface extends Document {
+export interface IExpense extends Document {
   createdBy: ObjectId; 
+  budgetId: ObjectId;
   title: string; 
-  category: 'Food' | 'Transport' | 'Shopping' | 'Utilities' | 'Healthcare' | 'Others';
   amount: number; 
   description?: string; 
   icon?: string; 
@@ -13,11 +13,16 @@ export interface ExpenseInterface extends Document {
 }
 
 // Mongoose schema for Expense
-const ExpenseSchema: Schema<ExpenseInterface> = new Schema(
+const ExpenseSchema: Schema<IExpense> = new Schema(
   {
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
+    },
+    budgetId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Budget',
       required: true,
     },
     title: {
@@ -25,11 +30,6 @@ const ExpenseSchema: Schema<ExpenseInterface> = new Schema(
       required: true,
       trim: true,
       maxlength: 50,
-    },
-    category: {
-      type: String,
-      required: true,
-      enum: ['Food', 'Transport', 'Shopping', 'Utilities', 'Healthcare', 'Others'],
     },
     amount: {
       type: Number,
@@ -58,7 +58,7 @@ const ExpenseSchema: Schema<ExpenseInterface> = new Schema(
 
 // Create the Expense model, or use an existing one to avoid model overwriting errors
 const ExpenseModel =
-  (mongoose.models.Expense as mongoose.Model<ExpenseInterface>) ||
-  mongoose.model<ExpenseInterface>('Expense', ExpenseSchema);
+  (mongoose.models.Expense as mongoose.Model<IExpense>) ||
+  mongoose.model<IExpense>('Expense', ExpenseSchema);
 
 export default ExpenseModel;

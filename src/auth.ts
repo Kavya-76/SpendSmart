@@ -9,7 +9,6 @@ import bcrypt from "bcryptjs";
 import { getUserById } from "./data/user";
 import UserModel, { IUser } from "./models/User";
 import dbConnect from "./lib/db";
-import axios from "axios";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -74,9 +73,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
-        token._id = user.id?.toString() || "";
-        token.isVerified = user.isVerified ?? false;
-        token.username = user.username ?? "";
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
+        token.username = user.username;
       }
       return token;
     },
