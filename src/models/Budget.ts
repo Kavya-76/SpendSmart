@@ -19,8 +19,8 @@ export interface IBudgetExtended extends Document {
   icon?: string;
   createdAt: Date; 
   updatedAt?: Date;
-  totalSpend: Number;
-  totalItem: Number;
+  totalSpend: number;
+  totalItem: number;
 }
 
 // Mongoose schema for Budget

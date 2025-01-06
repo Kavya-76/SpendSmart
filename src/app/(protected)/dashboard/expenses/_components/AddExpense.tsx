@@ -6,18 +6,26 @@ import React, { useState, useTransition } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-function AddExpense({ budgetId, refreshData }: any) {
-  const [emojiIcon, setEmojiIcon] = useState("😊");
-  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
-  const [title, setTitle] = useState(String);
-  const [amount, setAmount] = useState(Number);
-  const [description, setDescription] = useState(String);
-  const [loading, setLoading] = useState(false);
+// Define props type for AddExpense component
+interface AddExpenseProps {
+  budgetId: string;
+  refreshData: () => void;
+}
+
+const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
+  const [emojiIcon, setEmojiIcon] = useState<string>("😊");
+  const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0);
+  const [description, setDescription] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
+
   /**
    * Used to Add New Expense
    */
   const addNewExpense = async () => {
+    setLoading(true); // Show loader when starting the request
     startTransition(() => {
       axios
         .post("/api/create-expense", {
@@ -25,14 +33,16 @@ function AddExpense({ budgetId, refreshData }: any) {
           title,
           amount,
           description,
-          budgetId: budgetId
+          budgetId: budgetId,
         })
         .then((response) => {
           refreshData();
           toast("Expense Created Successfully");
+          setLoading(false); // Hide loader after successful request
         })
         .catch((err) => {
           console.error("Error:", err);
+          setLoading(false); // Hide loader on error
         });
     });
   };
@@ -50,7 +60,7 @@ function AddExpense({ budgetId, refreshData }: any) {
       {openEmojiPicker && (
         <div className="absolute z-20">
           <EmojiPicker
-            onEmojiClick={(e) => { 
+            onEmojiClick={(e) => {
               setEmojiIcon(e.emoji);
               setOpenEmojiPicker(false);
             }}
@@ -70,7 +80,7 @@ function AddExpense({ budgetId, refreshData }: any) {
         <h2 className="text-black font-medium my-1">Expense Amount</h2>
         <Input
           disabled={isPending}
-          type="Number"
+          type="number"
           placeholder="e.g. 1000"
           value={amount}
           onChange={(e) => setAmount(Number(e.target.value))}
@@ -86,13 +96,13 @@ function AddExpense({ budgetId, refreshData }: any) {
       </div>
       <Button
         disabled={!(title && amount) || isPending}
-        onClick={() => addNewExpense()}
+        onClick={addNewExpense}
         className="mt-3 w-full rounded-full"
       >
         {loading ? <Loader className="animate-spin" /> : "Add New Expense"}
       </Button>
     </div>
   );
-}
+};
 
 export default AddExpense;

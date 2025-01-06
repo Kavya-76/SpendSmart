@@ -1,5 +1,4 @@
-"use client";
-
+."use client";
 import React, { useState, useTransition } from "react";
 import {
   Dialog,
@@ -17,18 +16,13 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import axios from "axios";
 
-// Define the prop types for the CreateBudget component
-interface CreateBudgetProps {
-  refreshData: () => void;
-}
+const CreateBudget = ({ refreshData }: any) => {
+  const [emojiIcon, setEmojiIcon] = useState("😊");
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
-const CreateBudget: React.FC<CreateBudgetProps> = ({ refreshData }) => {
-  const [emojiIcon, setEmojiIcon] = useState<string>("😊");
-  const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
-
-  const [title, setTitle] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
+  const [title, setTitle] = useState(String);
+  const [amount, setAmount] = useState(Number);
+  const [description, setDescription] = useState(String);
 
   const [isPending, startTransition] = useTransition();
 
@@ -42,7 +36,7 @@ const CreateBudget: React.FC<CreateBudgetProps> = ({ refreshData }) => {
           description,
         })
         .then((response) => {
-          refreshData(); // Call refreshData prop after budget creation
+          refreshData()
           toast("Budget Created Successfully");
         })
         .catch((err) => {
@@ -56,7 +50,9 @@ const CreateBudget: React.FC<CreateBudgetProps> = ({ refreshData }) => {
       <Dialog>
         <DialogTrigger asChild>
           <div
-            className="bg-slate-100 p-10 rounded-2xl items-center flex flex-col border-2 border-dashed cursor-pointer hover:shadow-md"
+            className="bg-slate-100 p-10 rounded-2xl
+            items-center flex flex-col border-2 border-dashed
+            cursor-pointer hover:shadow-md"
           >
             <h2 className="text-3xl">+</h2>
             <h2>Create New Budget</h2>
@@ -102,7 +98,9 @@ const CreateBudget: React.FC<CreateBudgetProps> = ({ refreshData }) => {
                   />
                 </div>
                 <div className="mt-2">
-                  <h2 className="text-black font-medium my-1">Budget Description</h2>
+                  <h2 className="text-black font-medium my-1">
+                    Budget Description
+                  </h2>
                   <Input
                     type="text"
                     onChange={(e) => setDescription(e.target.value)}
@@ -116,7 +114,7 @@ const CreateBudget: React.FC<CreateBudgetProps> = ({ refreshData }) => {
             <DialogClose asChild>
               <Button
                 disabled={!(title && amount)}
-                onClick={onCreateBudget}
+                onClick={() => onCreateBudget()}
                 className="mt-5 w-full rounded-full"
               >
                 Create Budget
