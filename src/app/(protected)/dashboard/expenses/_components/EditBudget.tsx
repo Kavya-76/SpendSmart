@@ -44,7 +44,8 @@ const EditBudget : React.FC<EditBudgetProps> = ({ budgetInfo, refreshData }) => 
   const onUpdateBudget = async () => {
     startTransition(() => {
       axios
-        .post("/api/edit-budget", {
+        .put("/api/edit-budget", {
+          id: budgetInfo._id,
           icon: emojiIcon,
           title,
           amount,
