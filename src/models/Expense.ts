@@ -58,7 +58,7 @@ const ExpenseSchema: Schema<IExpense> = new Schema(
 
 // Create the Expense model, or use an existing one to avoid model overwriting errors
 const ExpenseModel =
-  (mongoose.models.Expense as mongoose.Model<IExpense>) ||
+  (mongoose.models?.Expense as mongoose.Model<IExpense>) ||
   mongoose.model<IExpense>('Expense', ExpenseSchema);
 
 export default ExpenseModel;

@@ -1,8 +1,7 @@
-import * as z from "zod";
 import mongoose from "mongoose";
-import { BudgetSchema } from "@/schemas";
+import { ExpenseSchema } from "@/schemas";
 import dbConnect from "@/lib/db";
-import BudgetModel, { IBudget } from "@/models/Budget";
+import ExpenseModel, { IExpense } from "@/models/Expense";
 import { currentUserId } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
@@ -11,7 +10,7 @@ export const POST = async (req: Request) => {
 
   try {
     const body = await req.json(); // Parse the incoming request body
-    const validatedFields = BudgetSchema.safeParse(body);
+    const validatedFields = ExpenseSchema.safeParse(body);
     
     if (!validatedFields.success) {
       return Response.json(
@@ -23,29 +22,30 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const { title, amount, description, icon } = validatedFields.data;
+    const { title, amount, description, icon, budgetId} = validatedFields.data;
 
     // getting userID
     const userId = await currentUserId();
 
     
     // Create a new budget
-    const newBudget: IBudget = new BudgetModel({
+    const newExpense: IExpense = new ExpenseModel({
       createdBy: new mongoose.Types.ObjectId(String(userId)),
       title,
       amount,
       description,
       icon,
+      budgetId: new mongoose.Types.ObjectId(String(budgetId)),
     });
 
-    await newBudget.save(); // Save the new user to the database
+    await newExpense.save(); // Save the new user to the database
 
     return NextResponse.json(
-      {success: "Budget Created Successfully"},
+      {success: "Expense Created Successfully"},
       {status: 200}
     )
   } catch (error) {
-    console.error("Error in CreateBudget API:", error);
+    console.error("Error in CreateExpense API:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 };

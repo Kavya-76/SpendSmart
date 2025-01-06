@@ -43,3 +43,17 @@ export const BudgetSchema = z.object({
     description: z.optional(z.string()),
     icon: z.optional(z.string())
 });
+
+export const ExpenseSchema = z.object({
+    title: z.string({
+        message: "Expense title is required"
+    }),
+    amount: z.number().min(0, {
+        message: "Expense amount must be at least 0"
+    }),
+    description: z.optional(z.string()),
+    icon: z.optional(z.string()),
+    budgetId: z.string({
+        message: "Budget ID is required"
+    })
+});

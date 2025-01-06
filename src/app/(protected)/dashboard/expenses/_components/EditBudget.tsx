@@ -1,5 +1,7 @@
 "use client";
-import React, { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { PenBox } from "lucide-react";
+import React, { useEffect, useState, useTransition } from "react";
 import {
   Dialog,
   DialogClose,
@@ -11,56 +13,64 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import EmojiPicker from "emoji-picker-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import axios from "axios";
+import { IBudget, IBudgetExtended } from "@/models/Budget";
 
-const CreateBudget = ({ refreshData }: any) => {
-  const [emojiIcon, setEmojiIcon] = useState("😊");
+interface EditBudgetProps {
+  budgetInfo: IBudgetExtended;
+  refreshData: () => void;
+}
+
+const EditBudget : React.FC<EditBudgetProps> = ({ budgetInfo, refreshData }) => {
+  const [emojiIcon, setEmojiIcon] = useState(budgetInfo?.icon);
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
   const [title, setTitle] = useState(String);
   const [amount, setAmount] = useState(Number);
   const [description, setDescription] = useState(String);
-
   const [isPending, startTransition] = useTransition();
 
-  const onCreateBudget = async () => {
+  useEffect(() => {
+    if (budgetInfo) {
+      setEmojiIcon(budgetInfo?.icon);
+      setAmount(budgetInfo.amount);
+      setTitle(budgetInfo.title);
+      setDescription(budgetInfo.description || "");
+    }
+  }, [budgetInfo]);
+
+  const onUpdateBudget = async () => {
     startTransition(() => {
       axios
-        .post("/api/create-budget", {
+        .post("/api/edit-budget", {
           icon: emojiIcon,
           title,
           amount,
           description,
         })
         .then((response) => {
-          refreshData()
-          toast("Budget Created Successfully");
+          refreshData();
+          toast("Budget Updated Successfully");
         })
         .catch((err) => {
           console.error("Error:", err);
         });
     });
   };
-
   return (
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <div
-            className="bg-slate-100 p-10 rounded-2xl
-            items-center flex flex-col border-2 border-dashed
-            cursor-pointer hover:shadow-md"
-          >
-            <h2 className="text-3xl">+</h2>
-            <h2>Create New Budget</h2>
-          </div>
+          <Button className="flex space-x-2 gap-2 rounded-full">
+            {" "}
+            <PenBox className="w-4" /> Edit
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Budget</DialogTitle>
+            <DialogTitle>Update Budget</DialogTitle>
             <DialogDescription>
               <div className="mt-5">
                 <Button
@@ -70,31 +80,32 @@ const CreateBudget = ({ refreshData }: any) => {
                 >
                   {emojiIcon}
                 </Button>
-                {openEmojiPicker && (
-                  <div className="absolute z-20">
-                    <EmojiPicker
-                      onEmojiClick={(e) => {
-                        setEmojiIcon(e.emoji);
-                        setOpenEmojiPicker(false);
-                      }}
-                    />
-                  </div>
-                )}
+                <div className="absolute z-20">
+                  <EmojiPicker
+                    open={openEmojiPicker}
+                    onEmojiClick={(e) => {
+                      setEmojiIcon(e.emoji);
+                      setOpenEmojiPicker(false);
+                    }}
+                  />
+                </div>
                 <div className="mt-2">
                   <h2 className="text-black font-medium my-1">Budget Name</h2>
                   <Input
-                    placeholder="e.g. Home Decor"
-                    onChange={(e) => setTitle(e.target.value)}
                     disabled={isPending}
+                    placeholder="e.g. Home Decor"
+                    defaultValue={budgetInfo.title || ""}
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
                 <div className="mt-2">
                   <h2 className="text-black font-medium my-1">Budget Amount</h2>
                   <Input
+                    disabled={isPending}
                     type="number"
+                    defaultValue={budgetInfo?.amount}
                     placeholder="e.g. 5000$"
                     onChange={(e) => setAmount(Number(e.target.value))}
-                    disabled={isPending}
                   />
                 </div>
                 <div className="mt-2">
@@ -102,9 +113,10 @@ const CreateBudget = ({ refreshData }: any) => {
                     Budget Description
                   </h2>
                   <Input
-                    type="text"
-                    onChange={(e) => setDescription(e.target.value)}
                     disabled={isPending}
+                    defaultValue={budgetInfo?.description}
+                    placeholder=""
+                    onChange={(e) => setDescription(e.target.value)}
                   />
                 </div>
               </div>
@@ -114,10 +126,10 @@ const CreateBudget = ({ refreshData }: any) => {
             <DialogClose asChild>
               <Button
                 disabled={!(title && amount)}
-                onClick={() => onCreateBudget()}
+                onClick={() => onUpdateBudget()}
                 className="mt-5 w-full rounded-full"
               >
-                Create Budget
+                Update Budget
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -127,4 +139,4 @@ const CreateBudget = ({ refreshData }: any) => {
   );
 };
 
-export default CreateBudget;
+export default EditBudget;
