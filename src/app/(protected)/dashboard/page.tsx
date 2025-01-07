@@ -1,16 +1,100 @@
-"use client"
-import React from 'react'
-import { useCurrentUser } from '@/hooks/use-current-user'
-import LogoutButton from '@/components/auth/logout-button'
-const Dashboard = () => {
+"use client";
+import React, { useEffect, useState } from "react";
+import UserButton from "@/app/_components/user-button";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import CardInfo from "./_components/CardInfo";
+import dbConnect from "@/lib/db";
+import BarChartDashboard from "./_components/BarChartDashboard";
+import BudgetItem from "./budgets/_components/BudgetItem";
+import ExpenseListTable from "./expenses/_components/ExpenseListTable";
+import axios from "axios";
+function Dashboard() {
   const user = useCurrentUser();
+
+  const [budgetList, setBudgetList] = useState([]);
+  const [incomeList, setIncomeList] = useState([]);
+  const [expensesList, setExpensesList] = useState([]);
+  useEffect(() => {
+    user && getBudgetList();
+  }, [user]);
+  /**
+   * used to get budget List
+   */
+
+  const getBudgetList = async () => {
+    axios.get("/api/get-budgets")
+      .then((response)=>{
+        const result = response.data
+        setBudgetList(result);
+        getAllExpenses();
+        getIncomeList();
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+  };
+
+  /**
+   * Get Income stream list
+   */
+  const getIncomeList = async () => {
+    axios.post("/api/get-incomes")    
+    .then((response)=>{
+      const result = response.data
+      setIncomeList(result);
+    })
+    .catch((error)=>{
+      console.log(error)
+    })
+  };
+
+  /**
+   * Used to get All expenses belong to users
+   */
+  const getAllExpenses = async () => {
+    axios.post("/api/get-expenses")
+      .then((response)=>{
+        const result = response.data
+        setExpensesList(result);
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+  };
+
   return (
-    <div>
-      {JSON.stringify(user)}
-      Dashboard
-      <LogoutButton>Logout</LogoutButton>
+    <div className="p-8 bg-">
+      <h2 className="font-bold text-4xl">Hi, {user?.fullName} 👋</h2>
+      <p className="text-gray-500">
+        Here's what happenning with your money, Lets Manage your expense
+      </p>
+
+      <CardInfo budgetList={budgetList} incomeList={incomeList} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 mt-6 gap-5">
+        <div className="lg:col-span-2">
+          <BarChartDashboard budgetList={budgetList} />
+
+          <ExpenseListTable
+            expensesList={expensesList}
+            refreshData={() => getBudgetList()}
+          />
+        </div>
+        <div className="grid gap-5">
+          <h2 className="font-bold text-lg">Latest Budgets</h2>
+          {budgetList?.length > 0
+            ? budgetList.map((budget, index) => (
+                <BudgetItem budget={budget} key={index} />
+              ))
+            : [1, 2, 3, 4].map((item, index) => (
+                <div
+                  className="h-[180xp] w-full
+                 bg-slate-200 rounded-lg animate-pulse"
+                ></div>
+              ))}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
