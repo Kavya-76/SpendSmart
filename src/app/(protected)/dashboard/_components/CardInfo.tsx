@@ -1,7 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import formatNumber from "@/lib/formatNumber";
-import getAdvice from "@/lib/getAdvice";
 import {
   PiggyBank,
   ReceiptText,
@@ -24,8 +23,8 @@ const CardInfo = ({ budgetList, incomeList }: any) => {
     }
   }, [budgetList, incomeList]);
 
-  useEffect(() => {
-    if (totalBudget > 0 || totalIncome > 0 || totalSpend > 0) {
+  // useEffect(() => {
+    // if (totalBudget > 0 || totalIncome > 0 || totalSpend > 0) {
       //   const fetchFinancialAdvice = async () => {
       //     const advice = await getAdvice(
       //       totalBudget,
@@ -35,8 +34,8 @@ const CardInfo = ({ budgetList, incomeList }: any) => {
       //     setFinancialAdvice(advice);
       //   };
       //   fetchFinancialAdvice();
-    }
-  }, [totalBudget, totalIncome, totalSpend]);
+    // }
+  // }, [totalBudget, totalIncome, totalSpend]);
 
   const CalculateCardInfo = () => {
     console.log(budgetList);
@@ -50,7 +49,7 @@ const CardInfo = ({ budgetList, incomeList }: any) => {
     });
 
     incomeList.forEach((element: any) => {
-      totalIncome_ = totalIncome_ + element.totalAmount;
+      totalIncome_ = totalIncome_ + Number(element.amount);
     });
 
     setTotalIncome(totalIncome_);
@@ -62,7 +61,7 @@ const CardInfo = ({ budgetList, incomeList }: any) => {
     <div>
       {budgetList?.length > 0 ? (
         <div>
-          <div className="p-7 border mt-4 -mb-1 rounded-2xl flex items-center justify-between">
+          {/* <div className="p-7 border mt-4 -mb-1 rounded-2xl flex items-center justify-between">
             <div className="">
               <div className="flex mb-2 flex-row space-x-1 items-center ">
                 <h2 className="text-md ">SpendSmart AI</h2>
@@ -79,7 +78,7 @@ const CardInfo = ({ budgetList, incomeList }: any) => {
                 {financialAdvice || "Loading financial advice..."}
               </h2>
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <div className="p-7 border rounded-2xl flex items-center justify-between">

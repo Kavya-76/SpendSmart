@@ -1,23 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import { IBudget } from "@/models/Budget"; // Import your IBudget interface
+import { IExpense } from "@/models/Expense"; // Import your IBudget interface
 
-interface BudgetItemProps {
-  budget: IBudget & {
-    totalSpend: number;
-    totalItem: number;
-  };
+interface ExpenseItemProps {
+  expense: IExpense 
 }
 
-const BudgetItem: React.FC<BudgetItemProps> = ({ budget }) => {
-  const calculateProgressPerc = (): string => {
-    const spend = budget.totalSpend || 0;
-    const perc = (spend / budget.amount) * 100;
-    return perc > 100 ? "100" : perc.toFixed(2);
-  };
-
+const ExpenseItem: React.FC<ExpenseItemProps> = ({ expense }) => {
   return (
-    <Link href={`/dashboard/expenses/${budget?._id}`}>
       <div
         className="p-5 border rounded-2xl hover:shadow-md cursor-pointer h-[170px]"
       >
@@ -26,27 +16,27 @@ const BudgetItem: React.FC<BudgetItemProps> = ({ budget }) => {
             <h2
               className="text-2xl p-3 px-4 bg-slate-100 rounded-full"
             >
-              {budget?.icon || "📊"}
+              {expense?.icon || "📊"}
             </h2>
             <div>
-              <h2 className="font-bold">{budget.title}</h2>
-              <h2 className="text-sm text-gray-500">
+              <h2 className="font-bold">{expense.title}</h2>
+              {/* <h2 className="text-sm text-gray-500">
                 {budget.totalItem || 0} Item{budget.totalItem !== 1 ? "s" : ""}
-              </h2>
+              </h2> */}
             </div>
           </div>
           <h2 className="font-bold text-primary text-lg">
-          ₹{budget.amount.toLocaleString()}
+            ${expense.amount.toLocaleString()}
           </h2>
         </div>
 
-        <div className="mt-5">
+        {/* <div className="mt-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs text-slate-400">
-            ₹{budget.totalSpend?.toLocaleString() || "0"} Spend
+              ${budget.totalSpend?.toLocaleString() || "0"} Spend
             </h2>
             <h2 className="text-xs text-slate-400">
-            ₹{(budget.amount - (budget.totalSpend || 0)).toLocaleString()} Remaining
+              ${(budget.amount - (budget.totalSpend || 0)).toLocaleString()} Remaining
             </h2>
           </div>
           <div className="w-full bg-slate-300 h-2 rounded-full">
@@ -57,10 +47,9 @@ const BudgetItem: React.FC<BudgetItemProps> = ({ budget }) => {
               }}
             ></div>
           </div>
-        </div>
+        </div> */}
       </div>
-    </Link>
   );
 };
 
-export default BudgetItem;
+export default ExpenseItem;
