@@ -7,7 +7,6 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { IExpense } from "@/models/Expense";
 import {
   Card,
   CardContent,
@@ -16,35 +15,27 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface ExpenseItemProps {
-  expenses: IExpense[];
+interface GroupedExpense {
+  createdAt: string; // ISO date string
+  totalAmount: number; // Expense totalAmount
 }
 
-const ExpenseChart: React.FC<ExpenseItemProps> = ({ expenses }) => {
-  const [fromDate, setFromDate] = React.useState<string>("");
-  const [toDate, setToDate] = React.useState<string>("");
+interface ExpenseChartProps {
+  groupedExpenses: GroupedExpense[]; // Array of grouped expenses
+  fromDate?: string; // Optional start date
+  toDate?: string;   // Optional end date
+}
 
-  // Filter expenses based on the selected date range
-  const filteredData = React.useMemo(() => {
-    return expenses.filter((expense) => {
-      const expenseDate = new Date(expense.createdAt).getTime();
-      const from = fromDate ? new Date(fromDate).getTime() : null;
-      const to = toDate ? new Date(toDate).getTime() : null;
-
-      return (
-        (!from || expenseDate >= from) &&
-        (!to || expenseDate <= to)
-      );
-    });
-  }, [expenses, fromDate, toDate]);
-
-  // Transform the filtered expenses into chart-ready format
+const ExpenseChart: React.FC<ExpenseChartProps> = ({
+  groupedExpenses,
+}) => {
+  // Transform the grouped expenses into chart-ready format
   const chartData = React.useMemo(() => {
-    return filteredData.map((expense) => ({
+    return groupedExpenses.map((expense) => ({
       date: new Date(expense.createdAt).toISOString().split("T")[0], // Format as YYYY-MM-DD
-      price: expense.amount,
+      price: expense.totalAmount,
     }));
-  }, [filteredData]);
+  }, [groupedExpenses]);
 
   return (
     <Card className="mt-5 mb-5">
@@ -57,34 +48,6 @@ const ExpenseChart: React.FC<ExpenseItemProps> = ({ expenses }) => {
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        {/* Date Range Controls */}
-        <div className="flex items-center gap-4 mb-4">
-          <div>
-            <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700">
-              From Date:
-            </label>
-            <input
-              id="fromDate"
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="toDate" className="block text-sm font-medium text-gray-700">
-              To Date:
-            </label>
-            <input
-              id="toDate"
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
-          </div>
-        </div>
-
         {/* Line Chart */}
         <div className="aspect-auto h-[250px] w-full">
           <LineChart
@@ -101,7 +64,7 @@ const ExpenseChart: React.FC<ExpenseItemProps> = ({ expenses }) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="date"
-              tickFormatter={(value) => {
+              tickFormatter={(value: string) => {
                 const date = new Date(value);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
@@ -117,11 +80,11 @@ const ExpenseChart: React.FC<ExpenseItemProps> = ({ expenses }) => {
               dataKey="price"
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value: number) => `$${value}`}
             />
             <Tooltip
-              formatter={(value: any) => `$${value}`}
-              labelFormatter={(label) => {
+              formatter={(value: number | string) => `$${value}`}
+              labelFormatter={(label: string) => {
                 const date = new Date(label);
                 return date.toLocaleDateString("en-US", {
                   month: "short",

@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import DashboardHeader from "./_components/DashboardHeader";
-import SideNav from "./_components/SideNav";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
