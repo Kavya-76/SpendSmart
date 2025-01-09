@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BudgetItem from "../../budgets/_components/BudgetItem";
@@ -24,32 +25,41 @@ import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { IBudgetExtended } from "@/models/Budget";
 
-const ExpenseScreen = ({ params }: any) => {
+interface ExpenseScreenProps {
+  params: {
+    id: string;
+  };
+}
+
+const ExpenseScreen = (
+  {params
+}: {
+  params: Promise<{ budgetId: string }>
+}) => {
   const user = useCurrentUser();
-  const [budgetInfo, setbudgetInfo] = useState<IBudgetExtended>();
+  const [budgetInfo, setBudgetInfo] = useState<IBudgetExtended | null>(null);
   const [expensesList, setExpensesList] = useState<IExpense[]>([]);
   const router = useRouter();
-  params = React.use(params);
-  const budgetId = params.id;
+  
+  const budgetId = React.use(params).budgetId
 
   useEffect(() => {
-    user && getBudgetInfo();
+    if (user) {
+      getBudgetInfo();
+    }
   }, [user]);
-
 
   /**
    * Get Budget Information
    */
   const getBudgetInfo = async () => {
-    if (user) {
-      try {
-        const response = await axios.get(`/api/get-budget/${budgetId}`)
-        const budget = response.data
-        setbudgetInfo(budget[0]);
-        getExpensesList();
-      } catch (error) {
-        console.error("Error fetching budgets:", error);
-      }
+    try {
+      const response = await axios.get(`/api/get-budget/${budgetId}`);
+      const budget = response.data;
+      setBudgetInfo(budget[0]);
+      await getExpensesList();
+    } catch (error) {
+      console.error("Error fetching budget info:", error);
     }
   };
 
@@ -58,29 +68,26 @@ const ExpenseScreen = ({ params }: any) => {
    */
   const getExpensesList = async () => {
     try {
-      const response = await axios.get(`/api/get-expenses/${budgetId}`)
+      const response = await axios.get(`/api/get-expenses/${budgetId}`);
       const expenses = response.data;
-      setExpensesList(expenses)
+      setExpensesList(expenses);
     } catch (error) {
       console.error("Error fetching expenses:", error);
-      throw error;
     }
-  }
+  };
 
   /**
-   * Used to Delete budget
+   * Delete Budget
    */
   const deleteBudget = async () => {
     try {
-      const response = await axios.delete(`/api/delete-budget/${budgetId}`)
-      setExpensesList([])
-      // console.log(response.data)
+      await axios.delete(`/api/delete-budget/${budgetId}`);
+      setExpensesList([]);
+      toast.success("Budget deleted!");
+      router.replace("/dashboard/budgets");
     } catch (error) {
-      console.error("Error deleting budgets: ", error);
-      throw error;
+      console.error("Error deleting budget:", error);
     }
-    toast("Budget Deleted !");
-    router.replace("/dashboard/budgets");
   };
 
   return (
@@ -91,11 +98,9 @@ const ExpenseScreen = ({ params }: any) => {
           My Expenses
         </span>
         <div className="flex gap-2 items-center">
-          {budgetInfo && <EditBudget
-            budgetInfo={budgetInfo}
-            refreshData={() => getBudgetInfo()}
-          />}
-
+          {budgetInfo && (
+            <EditBudget budgetInfo={budgetInfo} refreshData={getBudgetInfo} />
+          )}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button className="flex gap-2 rounded-full" variant="destructive">
@@ -113,7 +118,7 @@ const ExpenseScreen = ({ params }: any) => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => deleteBudget()}>
+                <AlertDialogAction onClick={deleteBudget}>
                   Continue
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -121,29 +126,16 @@ const ExpenseScreen = ({ params }: any) => {
           </AlertDialog>
         </div>
       </h2>
-      <div
-        className="grid grid-cols-1 
-        md:grid-cols-2 mt-6 gap-5"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 mt-6 gap-5">
         {budgetInfo ? (
           <BudgetItem budget={budgetInfo} />
         ) : (
-          <div
-            className="h-[150px] w-full bg-slate-200 
-            rounded-lg animate-pulse"
-          ></div>
+          <div className="h-[150px] w-full bg-slate-200 rounded-lg animate-pulse"></div>
         )}
-        <AddExpense
-          budgetId={params.id}
-          user={user}
-          refreshData={() => getBudgetInfo()}
-        />
+        <AddExpense budgetId={budgetId} refreshData={getBudgetInfo} />
       </div>
       <div className="mt-4">
-        <ExpenseListTable
-          expensesList={expensesList}
-          refreshData={() => getBudgetInfo()}
-        />
+        <ExpenseListTable expensesList={expensesList} refreshData={getBudgetInfo} />
       </div>
     </div>
   );

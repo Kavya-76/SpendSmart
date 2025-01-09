@@ -22,10 +22,11 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const { title, amount, description, icon, budgetId} = validatedFields.data;
+    const { title, amount, description, icon, budgetId, createdAt} = validatedFields.data;
 
     // getting userID
     const userId = await currentUserId();
+    console.log("Date: ",createdAt);
 
     
     // Create a new budget
@@ -36,6 +37,7 @@ export const POST = async (req: Request) => {
       description,
       icon,
       budgetId: new mongoose.Types.ObjectId(String(budgetId)),
+      createdAt: createdAt ? new Date(createdAt) : new Date(),
     });
 
     await newExpense.save(); // Save the new user to the database

@@ -1,50 +1,48 @@
-"use client"
-import React from 'react'
-import DashboardHeader from './_components/DashboardHeader';
-import SideNav from './_components/SideNav';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import BudgetModel from '@/models/Budget';
+"use client";
+import React from "react";
+import DashboardHeader from "./_components/DashboardHeader";
+import SideNav from "./_components/SideNav";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "./_components/DashboardSideBar";
 
+import axios from "axios";
 
+const DashboardLayout = ({ children }: any) => {
+  const router = useRouter();
+  const user = useCurrentUser();
 
-const DashboardLayout = ({children}:any) => {
-    const router = useRouter();
-    const user = useCurrentUser();
-    
-    useEffect(() => {
-        if (user) {
-          user&&checkUserBudgets();
+  useEffect(() => {
+    if (user) {
+      user && checkUserBudgets();
+    }
+  }, [user]);
+
+  const checkUserBudgets = async () => {
+    // Find budgets associated with the user's email and if no budget is found then redirect user to budgets page to create budgets
+    axios
+      .post("/api/get-budgets")
+      .then((response) => {
+        if (response.data.length === 0) {
+          router.replace("/dashboard/budgets");
         }
-      }, [user]);
-    
-      const checkUserBudgets = async () => {
-        try {
-        // Find budgets associated with the user's email and if no budget is found then redirect user to budgets page to create budgets
-        
-        //   const result = await BudgetModel.find({ createdBy: user?._id });
-        // const result = [];
-        //   if (result.length === 0) {
-        //     router.replace("/dashboard/budgets");
-        //   }
-        } catch (error) {
-          console.error("Error fetching budgets:", error);
-        }
-      };
+      })
+      .catch((error) => {
+        console.error("Error fetching budgets:", error);
+      });
+  };
 
-    return (
-        <div>
-          <div className="fixed md:w-64 hidden md:block ">
-            <SideNav />
-          </div>
-          <div className="md:ml-64 ">
-            <DashboardHeader />
-            {children}
-          </div>
-        </div>
-      );
-}
+  return (
+    <SidebarProvider>
+      <DashboardSidebar />
+      <main className="w-full" >
+        <DashboardHeader />
+        {children}
+      </main>
+    </SidebarProvider>
+  );
+};
 
-export default DashboardLayout
-
+export default DashboardLayout;

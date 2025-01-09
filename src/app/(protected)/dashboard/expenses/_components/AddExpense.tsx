@@ -5,6 +5,15 @@ import EmojiPicker from "emoji-picker-react";
 import React, { useState, useTransition } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Define props type for AddExpense component
 interface AddExpenseProps {
@@ -16,14 +25,16 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
   const [emojiIcon, setEmojiIcon] = useState<string>("😊");
   const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number>();
   const [description, setDescription] = useState<string>("");
+  const [createdAt, setCreatedAt] = useState<Date | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
   /**
    * Used to Add New Expense
    */
+
   const addNewExpense = async () => {
     setLoading(true); // Show loader when starting the request
     startTransition(() => {
@@ -34,6 +45,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
           amount,
           description,
           budgetId: budgetId,
+          createdAt: createdAt || new Date(),
         })
         .then((response) => {
           refreshData();
@@ -89,10 +101,36 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
       <div className="mt-2">
         <h2 className="text-black font-medium my-1">Expense Description</h2>
         <Input
+          placeholder="Add a description (optional)"
           disabled={isPending}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+      </div>
+      <div className="mt-2">
+        <h2 className="text-black font-medium my-1">Expense Date</h2>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-[280px] justify-start text-left font-normal",
+                !createdAt && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {createdAt ? format(createdAt, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={createdAt}
+              onSelect={setCreatedAt}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
       <Button
         disabled={!(title && amount) || isPending}

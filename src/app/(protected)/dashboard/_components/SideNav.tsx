@@ -47,14 +47,10 @@ function SideNav() {
 
   return (
     <div className="h-screen p-5 border shadow-sm">
-      {/* <Image src={'/logo.svg'}
-        alt='logo'
-        width={160}
-        height={100}
-        /> */}
+
       <div className="flex flex-row items-center">
-        {/* <Image src={"./chart-donut.svg"} alt="logo" width={40} height={25} /> */}
-        <span className="text-blue-800 font-bold text-xl">SpendSmart</span>
+        <Image src={"./logo.svg"} alt="logo" width={40} height={25} />
+        <span className="text-blue-800 font-bold text-xl ml-2">SpendSmart</span>
       </div>
       <div className="mt-5">
         {menuList.map((menu, index) => (
@@ -78,8 +74,7 @@ function SideNav() {
         className="fixed bottom-10 p-5 flex gap-2
             items-center"
       >
-        <UserButton />
-        Profile
+        Currency Component
       </div>
     </div>
   );

@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
   }, [user, getBudgetList]);
 
   return (
-    <div className="p-8 bg-">
+    <div className="w-full p-8 bg-">
       <h2 className="font-bold text-4xl">Hi, {user?.fullName} 👋</h2>
       <p className="text-gray-500">
         Here's what's happening with your money. Let's manage your expenses.
@@ -63,8 +63,8 @@ const Dashboard: React.FC = () => {
 
       <CardInfo budgetList={budgetList} incomeList={incomeList} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 mt-6 gap-5">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-12 mt-6 gap-5">
+        <div className="sm:col-span-2 md:col-span-4 lg:col-span-8">
           <BarChartDashboard budgetList={budgetList} />
 
           <ExpenseListTable
@@ -73,10 +73,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        <div className="grid gap-5">
-          <h2 className="font-bold text-lg">Latest Budgets</h2>
+        <div className="sm:col-span-1 md:col-span-2 lg:col-span-4 gap-5">
+          <h2 className="w-full font-bold text-lg">Latest Budgets</h2>
           {budgetList.length > 0 ? (
-            budgetList.slice(0,3).map((budget, index) => (
+            budgetList.slice(0, 3).map((budget, index) => (
               <BudgetItem budget={budget} key={budget.id || index} />
             ))
           ) : (
