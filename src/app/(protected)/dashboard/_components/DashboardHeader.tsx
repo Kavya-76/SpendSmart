@@ -1,22 +1,22 @@
-import React from 'react'
-import UserButton from '@/app/_components/user-button'
-import { Toggle } from "@/components/ui/toggle"
-import { useSidebar } from "@/components/ui/sidebar"
+import React from "react";
+import UserButton from "@/app/_components/user-button";
+import { Toggle } from "@/components/ui/toggle";
+import { useSidebar } from "@/components/ui/sidebar";
+import Image from "next/image";
+import toggle from "/sidebar-toogle.svg"
 
 function DashboardHeader() {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar } = useSidebar();
   return (
-    <div className='w-full p-5 shadow-sm border-b flex justify-between'>
-        <div>
-        <button onClick={toggleSidebar}><Toggle>↔</Toggle>
-        </button>
-        </div>
-        <div>
-            <UserButton/>
-        </div>
-       
+    <div className="w-full p-5 shadow-sm border-b flex justify-between">
+      <div>
+        <Toggle onClick={toggleSidebar} ><Image src="/sidebar-toggle.svg" alt="sidebar-toggle" width={20} height={20}/></Toggle>
+      </div>
+      <div>
+        <UserButton />
+      </div>
     </div>
-  )
+  );
 }
 
-export default DashboardHeader
+export default DashboardHeader;

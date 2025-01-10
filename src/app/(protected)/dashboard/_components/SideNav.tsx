@@ -4,13 +4,10 @@ import {
   LayoutGrid,
   PiggyBank,
   ReceiptText,
-  ShieldCheck,
   CircleDollarSign,
-  TrendingUp,
-  TrendingDownIcon,
 } from "lucide-react";
-import UserButton from "@/app/_components/user-button";
 import { usePathname } from "next/navigation";
+import logo from "./public/logo.svg"
 import Link from "next/link";
 function SideNav() {
   const menuList = [
@@ -47,10 +44,13 @@ function SideNav() {
 
   return (
     <div className="h-screen p-5 border shadow-sm">
-
       <div className="flex flex-row items-center">
-        <Image src={"./logo.svg"} alt="logo" width={40} height={25} />
-        <span className="text-blue-800 font-bold text-xl ml-2">SpendSmart</span>
+        <Link href="/">
+          <Image src={logo} alt="logo"/>
+        </Link>
+          <span className="text-blue-800 font-bold text-xl ml-2">
+            SpendSmart
+          </span>
       </div>
       <div className="mt-5">
         {menuList.map((menu, index) => (

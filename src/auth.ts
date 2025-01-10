@@ -5,6 +5,7 @@ import { LoginSchema } from "./schemas";
 import { getUserByEmail } from "./data/user";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import Facebook from "next-auth/providers/facebook"
 import bcrypt from "bcryptjs";
 import { getUserById } from "./data/user";
 import UserModel, { IUser } from "./models/User";
@@ -12,6 +13,10 @@ import dbConnect from "./lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    Facebook({
+      clientId: process.env.FACEBOOK_CLIENT_ID!,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!
+    }), 
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,

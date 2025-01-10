@@ -22,7 +22,7 @@ const DashboardLayout = ({ children }: any) => {
   const checkUserBudgets = async () => {
     // Find budgets associated with the user's email and if no budget is found then redirect user to budgets page to create budgets
     axios
-      .post("/api/get-budgets")
+      .get("/api/get-budgets")
       .then((response) => {
         if (response.data.length === 0) {
           router.replace("/dashboard/budgets");

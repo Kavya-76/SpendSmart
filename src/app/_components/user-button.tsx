@@ -1,95 +1,62 @@
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  LogOut,
+  Settings,
+  User,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { logout } from "@/actions/logout";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 const UserButton = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
   const user = useCurrentUser();
 
-  const onProfile = () =>{
-    console.log("profile clicked")
-  }
-
-  const onLogout = ()=>{
-    console.log("logout clicked")
-  }
-
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const handleNavigation = (path: string) => {
+    router.replace(path);
+  };
 
   return (
-    <div style={{ position: "relative", display: "inline-block" }}>
-      {/* User Avatar/Button */}
-      <button
-        onClick={toggleMenu}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          padding: "8px 12px",
-          borderRadius: "20px",
-          border: "1px solid #ccc",
-          background: "#fff",
-          cursor: "pointer",
-        }}
-      >
-        <img
-          src={user.avatar || "https://via.placeholder.com/40"}
-          alt="User Avatar"
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            marginRight: "8px",
-          }}
-        />
-        <span>{user.name || "User"}</span>
-      </button>
-
-      {/* Dropdown Menu */}
-      {menuOpen && (
-        <div
-          style={{
-            position: "absolute",
-            top: "100%",
-            right: 0,
-            marginTop: "8px",
-            background: "#fff",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            overflow: "hidden",
-            zIndex: 1000,
-          }}
-        >
-          <button
-            onClick={onProfile}
-            style={{
-              padding: "8px 16px",
-              display: "block",
-              width: "100%",
-              textAlign: "left",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              borderBottom: "1px solid #eee",
-            }}
-          >
-            View Profile
-          </button>
-          <button
-            onClick={onLogout}
-            style={{
-              padding: "8px 16px",
-              display: "block",
-              width: "100%",
-              textAlign: "left",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      )}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">
+          {user ? user.name : "User"}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem onClick={() => handleNavigation("/profile")}>
+            <User />
+            <span>Profile</span>
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleNavigation("/settings")}>
+            <Settings />
+            <span>Settings</span>
+            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => logout()}>
+          <LogOut />
+          <span>Log out</span>
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

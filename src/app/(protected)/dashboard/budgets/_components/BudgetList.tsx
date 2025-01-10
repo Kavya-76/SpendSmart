@@ -19,7 +19,7 @@ const BudgetList: React.FC = () => {
 
   const getBudgetList = async (): Promise<void> => {
     try {
-      const response = await axios.get<IBudgetExtended[]>("/api/get-budgets");
+      const response = await axios("/api/get-budgets");
       setBudgetList(response.data);
     } catch (error) {
       console.error("Error fetching budgets:", error);
