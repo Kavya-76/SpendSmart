@@ -11,7 +11,7 @@ function Header() {
   return (
     <div className="p-5 flex justify-between items-center border shadow-sm">
       <div className="flex flex-row items-center">
-        <Image src={"./logo.svg"} alt="logo" width={40} height={25} />
+        <Image src="/logo.svg" alt="logo" width={40} height={25} />
         <span className="text-blue-800  font-bold text-xl ml-2">SpendSmart</span>
       </div>
       {isSignedIn ? (

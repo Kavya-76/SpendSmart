@@ -10,7 +10,7 @@ function Hero() {
           titleComponent={
             <>
               <h1 className="text-4xl font-semibold text-black dark:text-white">
-                Manage your Money with AI-Driven Personal <br />
+                Manage your Money with Personal <br />
                 <span className="text-4xl md:text-[6rem] text-blue-800 font-bold mt-1 leading-none">
                   Finance Tracker
                 </span>
@@ -19,7 +19,7 @@ function Hero() {
           }
         >
           <Image
-            src={`/dashboard.png`}
+            src={`/dashboard2.png`}
             alt="hero"
             height={720}
             width={1400}

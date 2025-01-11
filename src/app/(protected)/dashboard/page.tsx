@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-4 gap-5">
           <h2 className="w-full font-bold text-lg">Latest Budgets</h2>
           {budgetList.length > 0 ? (
-            budgetList.slice(0, 3).map((budget, index) => (
+            budgetList.slice(0, 5).map((budget, index) => (
               <BudgetItem budget={budget} key={budget.id || index} />
             ))
           ) : (

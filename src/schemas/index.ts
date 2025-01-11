@@ -57,12 +57,13 @@ export const ExpenseSchema = z.object({
     message: "Budget ID is required",
   }),
   createdAt: z.optional(
-    z
-      .string()
-      .refine((str) => !isNaN(Date.parse(str)), {
-        message: "Invalid date format",
-      })
-      .transform((str) => new Date(str))
+    z.date()
+    // z
+    //   .string()
+    //   .refine((str) => !isNaN(Date.parse(str)), {
+    //     message: "Invalid date format",
+    //   })
+    //   .transform((str) => new Date(str))
   ),
 });
 

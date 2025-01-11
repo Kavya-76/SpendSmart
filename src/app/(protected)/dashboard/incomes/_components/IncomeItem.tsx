@@ -18,8 +18,13 @@ const IncomeItem: React.FC<IncomeItemProps> = ({ income }) => {
           </div>
         </div>
         <h2 className="font-bold text-primary text-lg">
-          ${income.amount.toLocaleString()}
+          ₹{income.amount.toLocaleString()}
         </h2>
+      </div>
+      <div className="mt-5">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="s">{income.description}</h2>
+        </div>
       </div>
     </div>
   );

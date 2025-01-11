@@ -13,6 +13,7 @@ import {
 import EmojiPicker from "emoji-picker-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import axios from "axios";
 
@@ -36,7 +37,7 @@ const CreateIncome = ({ refreshData }: any) => {
           description,
         })
         .then((response) => {
-          refreshData()
+          refreshData();
           toast("Income Added Successfully");
         })
         .catch((err) => {
@@ -61,55 +62,61 @@ const CreateIncome = ({ refreshData }: any) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Income</DialogTitle>
-            <DialogDescription>
-              <div className="mt-5">
-                <Button
-                  variant="outline"
-                  className="text-lg"
-                  onClick={() => setOpenEmojiPicker(!openEmojiPicker)}
-                >
-                  {emojiIcon}
-                </Button>
-                {openEmojiPicker && (
-                  <div className="absolute z-20">
-                    <EmojiPicker
-                      onEmojiClick={(e) => {
-                        setEmojiIcon(e.emoji);
-                        setOpenEmojiPicker(false);
-                      }}
-                    />
-                  </div>
-                )}
-                <div className="mt-2">
-                  <h2 className="text-black font-medium my-1">Income Name</h2>
-                  <Input
-                    placeholder="e.g. Home Decor"
-                    onChange={(e) => setTitle(e.target.value)}
-                    disabled={isPending}
-                  />
-                </div>
-                <div className="mt-2">
-                  <h2 className="text-black font-medium my-1">Income Amount</h2>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 5000$"
-                    onChange={(e) => setAmount(Number(e.target.value))}
-                    disabled={isPending}
-                  />
-                </div>
-                <div className="mt-2">
-                  <h2 className="text-black font-medium my-1">
-                    Income Description
-                  </h2>
-                  <Input
-                    type="text"
-                    onChange={(e) => setDescription(e.target.value)}
-                    disabled={isPending}
-                  />
-                </div>
-              </div>
-            </DialogDescription>
+            <DialogDescription></DialogDescription>
           </DialogHeader>
+          <div className="mt-2">
+            <Button
+              variant="outline"
+              className="text-lg"
+              onClick={() => setOpenEmojiPicker(!openEmojiPicker)}
+            >
+              {emojiIcon}
+            </Button>
+            {openEmojiPicker && (
+              <div className="absolute z-20">
+                <EmojiPicker
+                  onEmojiClick={(e) => {
+                    setEmojiIcon(e.emoji);
+                    setOpenEmojiPicker(false);
+                  }}
+                />
+              </div>
+            )}
+            <div className="mt-2">
+              <Label htmlFor="title" className="text-right">
+                Income Name
+              </Label>
+              <Input
+                id="title"
+                placeholder="e.g. Home Decor"
+                onChange={(e) => setTitle(e.target.value)}
+                disabled={isPending}
+              />
+            </div>
+            <div className="mt-2">
+              <Label htmlFor="amount" className="text-right">
+                Income Amount
+              </Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="e.g. 5000$"
+                onChange={(e) => setAmount(Number(e.target.value))}
+                disabled={isPending}
+              />
+            </div>
+            <div className="mt-2">
+              <Label htmlFor="description" className="text-right">
+                Income Description
+              </Label>
+              <Input
+                id="description"
+                type="text"
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={isPending}
+              />
+            </div>
+          </div>
           <DialogFooter className="sm:justify-start">
             <DialogClose asChild>
               <Button

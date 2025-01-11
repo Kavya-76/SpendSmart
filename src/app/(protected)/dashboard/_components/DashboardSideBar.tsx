@@ -8,7 +8,6 @@ import {
   CircleDollarSign,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import logo from "./logo.svg"
 import Link from "next/link";
 
 export function DashboardSidebar() {
@@ -47,7 +46,9 @@ export function DashboardSidebar() {
     <Sidebar>
       <div className="h-screen p-5 border shadow-sm">
         <div className="flex flex-row items-center">
-          <Image src={logo} alt="logo" width={40} height={25} />
+          <Link href="/">
+            <Image src="/logo.svg" alt="logo" width={40} height={25} />
+          </Link>
           <span className="text-blue-800 font-bold text-xl ml-2">
             SpendSmart
           </span>
@@ -74,7 +75,7 @@ export function DashboardSidebar() {
           className="fixed bottom-10 p-5 flex gap-2
       items-center"
         >
-          Currency Component
+          {/* Currency Component */}
         </div>
       </div>
     </Sidebar>

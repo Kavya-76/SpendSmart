@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader } from "lucide-react";
-import EmojiPicker from "emoji-picker-react";
-import React, { useState, useTransition } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,7 +13,10 @@ import {
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
 
+// EmojiPicker and other client-specific imports remain dynamically loaded
+const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false });
 // Define props type for AddExpense component
 interface AddExpenseProps {
   budgetId: string;
@@ -22,6 +24,7 @@ interface AddExpenseProps {
 }
 
 const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
+  const [isClient, setIsClient] = useState(false); // Ensure client-side rendering
   const [emojiIcon, setEmojiIcon] = useState<string>("😊");
   const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
@@ -31,12 +34,17 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
-  /**
-   * Used to Add New Expense
-   */
+  useEffect(() => {
+    setIsClient(true); // Set true after hydration
+  }, []);
+
+  if (!isClient) {
+    // Render fallback or nothing during SSR
+    return null;
+  }
 
   const addNewExpense = async () => {
-    setLoading(true); // Show loader when starting the request
+    setLoading(true);
     startTransition(() => {
       axios
         .post("/api/create-expense", {
@@ -44,17 +52,23 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
           title,
           amount,
           description,
-          budgetId: budgetId,
+          budgetId,
           createdAt: createdAt || new Date(),
         })
-        .then((response) => {
+        .then(() => {
+        setTitle("");
+        setAmount(undefined);
+        setDescription("");
+        setCreatedAt(undefined);
+        setEmojiIcon("😊");
+
           refreshData();
           toast("Expense Created Successfully");
-          setLoading(false); // Hide loader after successful request
+          setLoading(false);
         })
         .catch((err) => {
           console.error("Error:", err);
-          setLoading(false); // Hide loader on error
+          setLoading(false);
         });
     });
   };
@@ -94,8 +108,10 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
           disabled={isPending}
           type="number"
           placeholder="e.g. 1000"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
+          value={amount !== undefined ? amount : ""} // Ensure it's always controlled
+          onChange={(e) =>
+            setAmount(e.target.value ? Number(e.target.value) : undefined)
+          } // Handle type conversion
         />
       </div>
       <div className="mt-2">

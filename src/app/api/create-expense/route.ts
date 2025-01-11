@@ -10,6 +10,8 @@ export const POST = async (req: Request) => {
 
   try {
     const body = await req.json(); // Parse the incoming request body
+    body.createdAt = new Date(body.createdAt);
+
     const validatedFields = ExpenseSchema.safeParse(body);
     
     if (!validatedFields.success) {

@@ -28,7 +28,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({ expense }) => {
           </div>
         </div>
         <h2 className="font-bold text-primary text-lg">
-          ${expense.amount.toLocaleString()}
+        ₹{expense.amount.toLocaleString()}
         </h2>
       </div>
 
