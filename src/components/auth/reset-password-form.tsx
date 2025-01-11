@@ -2,7 +2,6 @@
 
 import { ResetPasswordSchema } from "@/schemas";
 import * as z from "zod";
-import { CardWrapper } from "@/components/auth/card-wrapper";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
@@ -12,6 +11,7 @@ import { FormSuccess } from "@/components/form-success";
 import { useState, useTransition } from "react";
 import axios from "axios"; // Import Axios
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -35,7 +35,9 @@ export const ResetPasswordForm = () => {
   // Axios request function to call the /api/reset route
   const resetPassword = async (values: z.infer<typeof ResetPasswordSchema>) => {
     try {
-      const response = await axios.post("/api/reset-password", { email: values.email });
+      const response = await axios.post("/api/reset-password", {
+        email: values.email,
+      });
       if (response.data.success) {
         setSuccess(response.data.success);
         setError(""); // Clear any previous errors
@@ -60,14 +62,19 @@ export const ResetPasswordForm = () => {
   };
 
   return (
-    <CardWrapper
-      headerLabel="Forgot your password"
-      backButtonLabel="Back to login"
-      backButtonHref="/auth/login"
-    >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
+    <Form {...form}>
+      <form
+        className={cn("flex flex-col gap-6")}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold">Forgot your password</h1>
+          <p className="text-balance text-sm text-muted-foreground">
+            Enter your email to get verification mail
+          </p>
+        </div>
+        <div className="grid gap-6">
+          <div className="grid gap-2">
             <FormField
               control={form.control}
               name="email"
@@ -92,8 +99,14 @@ export const ResetPasswordForm = () => {
           <Button type="submit" className="w-full" disabled={isPending}>
             Send Reset Email
           </Button>
-        </form>
-      </Form>
-    </CardWrapper>
+        </div>
+        <div className="text-center text-sm">
+          Back to login?{" "}
+          <Link href="/auth/login" className="underline underline-offset-4">
+            Login
+          </Link>
+        </div>
+      </form>
+    </Form>
   );
 };

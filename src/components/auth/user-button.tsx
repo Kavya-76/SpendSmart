@@ -1,10 +1,11 @@
 "use client"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
-import LogoutButton from "@/components/auth/logout-button"
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { FaUser } from "react-icons/fa"
 import {LogOutIcon} from "lucide-react"
+import { Button } from "../ui/button"
+import { logout } from "@/actions/logout"
 
 
 export const UserButton = () =>{
@@ -21,12 +22,12 @@ export const UserButton = () =>{
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-20" align="end">
-                <LogoutButton>
+                <Button onClick={()=>logout()}>
                     <DropdownMenuItem>
                         <LogOutIcon className="h-4 w-4 mr-2" />
                         Logout
                     </DropdownMenuItem>
-                </LogoutButton>
+                </Button>
             </DropdownMenuContent>
         </DropdownMenu>
     )
