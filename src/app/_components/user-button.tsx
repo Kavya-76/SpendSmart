@@ -1,8 +1,8 @@
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import {
   LogOut,
-  Settings,
-  User,
+  // Settings,
+  // User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { logout } from "@/actions/logout";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  // DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -20,12 +20,12 @@ import {
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 const UserButton = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const user = useCurrentUser();
 
-  const handleNavigation = (path: string) => {
-    router.replace(path);
-  };
+  // const handleNavigation = (path: string) => {
+  //   router.replace(path);
+  // };
 
   return (
     <DropdownMenu>
@@ -36,7 +36,7 @@ const UserButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => handleNavigation("/profile")}>
             <User />
@@ -48,7 +48,7 @@ const UserButton = () => {
             <span>Settings</span>
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-        </DropdownMenuGroup>
+        </DropdownMenuGroup> */}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()}>
           <LogOut />

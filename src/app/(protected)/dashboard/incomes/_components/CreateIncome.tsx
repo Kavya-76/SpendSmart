@@ -17,13 +17,17 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import axios from "axios";
 
-const CreateIncome = ({ refreshData }: any) => {
+interface CreateIncomeProps {
+  refreshData: () => void;
+}
+
+const CreateIncome: React.FC<CreateIncomeProps> = ({ refreshData }) => {
   const [emojiIcon, setEmojiIcon] = useState("😊");
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
-  const [title, setTitle] = useState(String);
-  const [amount, setAmount] = useState(Number);
-  const [description, setDescription] = useState(String);
+  const [title, setTitle] = useState<string>("");
+  const [amount, setAmount] = useState<number | undefined>(undefined);
+  const [description, setDescription] = useState<string>("");
 
   const [isPending, startTransition] = useTransition();
 
@@ -36,12 +40,13 @@ const CreateIncome = ({ refreshData }: any) => {
           amount,
           description,
         })
-        .then((response) => {
+        .then(() => {
           refreshData();
-          toast("Income Added Successfully");
+          toast.success("Income Added Successfully");
         })
         .catch((err) => {
           console.error("Error:", err);
+          toast.error("Failed to add income. Please try again.");
         });
     });
   };
@@ -90,6 +95,7 @@ const CreateIncome = ({ refreshData }: any) => {
                 id="title"
                 placeholder="e.g. Home Decor"
                 onChange={(e) => setTitle(e.target.value)}
+                value={title}
                 disabled={isPending}
               />
             </div>
@@ -100,8 +106,9 @@ const CreateIncome = ({ refreshData }: any) => {
               <Input
                 id="amount"
                 type="number"
-                placeholder="e.g. 5000$"
+                placeholder="e.g. 5000"
                 onChange={(e) => setAmount(Number(e.target.value))}
+                value={amount || ""}
                 disabled={isPending}
               />
             </div>
@@ -112,7 +119,9 @@ const CreateIncome = ({ refreshData }: any) => {
               <Input
                 id="description"
                 type="text"
+                placeholder="Optional description"
                 onChange={(e) => setDescription(e.target.value)}
+                value={description}
                 disabled={isPending}
               />
             </div>
@@ -120,8 +129,8 @@ const CreateIncome = ({ refreshData }: any) => {
           <DialogFooter className="sm:justify-start">
             <DialogClose asChild>
               <Button
-                disabled={!(title && amount)}
-                onClick={() => onCreateIncome()}
+                disabled={!(title && amount !== undefined && amount > 0)}
+                onClick={onCreateIncome}
                 className="mt-5 w-full rounded-full"
               >
                 Add Income

@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
 import dbConnect from "@/lib/db";
 import ExpenseModel from "@/models/Expense";
@@ -7,11 +6,13 @@ import { NextResponse } from "next/server";
 
 export const DELETE = async (
   req: Request,
-  context: { params: { budgetId: string } }
+  context: { params: Promise<{ budgetId: string }> } // Update params to a Promise
 ) => {
   await dbConnect();
-  const { params } = context;
-  const { budgetId } = await params;
+
+  // Unwrap the params Promise
+  const { budgetId } = await context.params;
+
   if (!budgetId) {
     return NextResponse.json({ error: "BudgetId not found" }, { status: 404 });
   }
@@ -22,7 +23,7 @@ export const DELETE = async (
 
     try {
       // Delete all expenses associated with the budget
-      const deleteExpensesResult = await ExpenseModel.deleteMany(
+      await ExpenseModel.deleteMany(
         { budgetId: new mongoose.Types.ObjectId(budgetId) },
         { session }
       );
@@ -48,7 +49,7 @@ export const DELETE = async (
     } catch (error) {
       await session.abortTransaction();
       console.error("Transaction error:", error);
-      NextResponse.json(
+      return NextResponse.json(
         { message: "Failed to delete budget and expenses" },
         { status: 500 }
       );
@@ -57,6 +58,6 @@ export const DELETE = async (
     }
   } catch (error) {
     console.error("Error deleting budget or expenses:", error);
-    NextResponse.json({ message: "Server error" }, { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 };

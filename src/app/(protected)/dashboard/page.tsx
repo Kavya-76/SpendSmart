@@ -27,38 +27,40 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error("Error fetching budgets:", error);
     }
-  }, []);
+  }, []); // Empty dependency array ensures this function is stable
 
   // Fetch income list
-  const getIncomeList = useCallback(async () => {
+  const getIncomeList = async () => {
     try {
       const response = await axios.get("/api/get-incomes");
       setIncomeList(response.data);
     } catch (error) {
       console.error("Error fetching incomes:", error);
     }
-  }, []);
+  };
 
   // Fetch all expenses
-  const getAllExpenses = useCallback(async () => {
+  const getAllExpenses = async () => {
     try {
       const response = await axios.get("/api/get-all-expenses");
       setExpensesList(response.data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
     }
-  }, []);
+  };
 
   // Fetch data when user changes
   useEffect(() => {
-    if (user) getBudgetList();
+    if (user) {
+      getBudgetList();
+    }
   }, [user, getBudgetList]);
 
   return (
     <div className="w-full p-8 bg-">
-      <h2 className="font-bold text-4xl">Hi, {user?.fullName} 👋</h2>
+      <h2 className="font-bold text-4xl">Hi, {user?.name} 👋</h2>
       <p className="text-gray-500">
-        Here's what's happening with your money. Let's manage your expenses.
+        Here&apos;s what&apos;s happening with your money. Let&apos;s manage your expenses.
       </p>
 
       <CardInfo budgetList={budgetList} incomeList={incomeList} />
@@ -75,18 +77,18 @@ const Dashboard: React.FC = () => {
 
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-4 gap-5">
           <h2 className="w-full font-bold text-lg">Latest Budgets</h2>
-          {budgetList.length > 0 ? (
-            budgetList.slice(0, 5).map((budget, index) => (
-              <BudgetItem budget={budget} key={budget.id || index} />
-            ))
-          ) : (
-            [1, 2, 3, 4].map((item) => (
-              <div
-                key={item}
-                className="h-[180px] w-full bg-slate-200 rounded-lg animate-pulse"
-              ></div>
-            ))
-          )}
+          {budgetList.length > 0
+            ? budgetList
+                .slice(0, 5)
+                .map((budget, index) => (
+                  <BudgetItem budget={budget} key={budget.id || index} />
+                ))
+            : [1, 2, 3, 4].map((item) => (
+                <div
+                  key={item}
+                  className="h-[180px] w-full bg-slate-200 rounded-lg animate-pulse"
+                ></div>
+              ))}
         </div>
       </div>
     </div>

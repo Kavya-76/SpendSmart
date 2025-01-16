@@ -6,6 +6,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  ResponsiveContainer, // Import ResponsiveContainer
 } from "recharts";
 import {
   Card,
@@ -48,58 +49,58 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({ groupedExpenses }) => {
         </CardHeader>
         <CardContent className="px-2 sm:p-6">
           {/* Line Chart */}
-          <div className="aspect-auto h-[250px] w-full">
-            <LineChart
-              data={chartData}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-              width={600}
-              height={300}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="date"
-                tickFormatter={(value: string) => {
-                  const date = new Date(value);
-                  return date.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  });
+          <div className="aspect-auto w-full h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={chartData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
                 }}
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                minTickGap={32}
-              />
-              <YAxis
-                dataKey="price"
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value: number) => `₹${value}`}
-              />
-              <Tooltip
-                formatter={(value: number | string) => `₹${value}`}
-                labelFormatter={(label: string) => {
-                  const date = new Date(label);
-                  return date.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  });
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="price"
-                stroke="#8884d8"
-                strokeWidth={2}
-                dot={false}
-              />
-            </LineChart>
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(value: string) => {
+                    const date = new Date(value);
+                    return date.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    });
+                  }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  minTickGap={32}
+                />
+                <YAxis
+                  dataKey="price"
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value: number) => `₹${value}`}
+                />
+                <Tooltip
+                  formatter={(value: number | string) => `₹${value}`}
+                  labelFormatter={(label: string) => {
+                    const date = new Date(label);
+                    return date.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="price"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>

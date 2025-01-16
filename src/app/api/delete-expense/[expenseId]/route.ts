@@ -4,12 +4,12 @@ import dbConnect from "@/lib/db"; // Ensure you connect to your MongoDB database
 
 export const DELETE = async (
   req: Request,
-  context: { params: { expenseId: string } }
+  context: { params: Promise<{ expenseId: string }> } // Update params to be a Promise
 ) => {
   await dbConnect(); // Connect to the database
 
-  const { params } = context;
-  const { expenseId } = await params;
+  // Unwrap the params Promise
+  const { expenseId } = await context.params;
 
   if (!expenseId) {
     return NextResponse.json(

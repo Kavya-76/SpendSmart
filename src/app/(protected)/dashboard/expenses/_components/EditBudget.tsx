@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -51,7 +50,7 @@ const EditBudget: React.FC<EditBudgetProps> = ({ budgetInfo, refreshData }) => {
           amount,
           description,
         })
-        .then((response) => {
+        .then(() => {
           refreshData();
           toast("Budget Updated Successfully");
         })

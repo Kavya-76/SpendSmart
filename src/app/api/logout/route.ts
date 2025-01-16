@@ -1,7 +1,7 @@
 import { signOut } from "@/auth";
 import { NextResponse } from "next/server";
 
-export const POST = async (req: Request) => {
+export const POST = async () => {
   try {
     // Clear authentication/session data
     await signOut({redirect: false});

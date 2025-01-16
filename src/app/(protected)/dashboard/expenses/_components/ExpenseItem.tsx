@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import { IExpense } from "@/models/Expense"; // Import your IBudget interface
 
 interface ExpenseItemProps {

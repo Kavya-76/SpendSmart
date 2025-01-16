@@ -1,14 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import BudgetModel from "@/models/Budget";
 import mongoose from "mongoose";
 import { currentUserId } from "@/lib/auth";
 
-export const GET = async (req: Request) => {
+export const GET = async () => {
   await dbConnect();
 
   try {
     const userId = await currentUserId();
+    console.log(userId)
     const budgets = await BudgetModel.aggregate([
         {
           $match: {

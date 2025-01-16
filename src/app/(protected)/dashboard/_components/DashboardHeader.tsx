@@ -3,7 +3,6 @@ import UserButton from "@/app/_components/user-button";
 import { Toggle } from "@/components/ui/toggle";
 import { useSidebar } from "@/components/ui/sidebar";
 import Image from "next/image";
-import toggle from "/sidebar-toogle.svg"
 
 function DashboardHeader() {
   const { toggleSidebar } = useSidebar();

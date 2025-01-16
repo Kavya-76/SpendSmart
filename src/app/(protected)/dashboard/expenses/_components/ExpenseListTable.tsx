@@ -1,5 +1,4 @@
 import { IExpense } from "@/models/Expense";
-import { Key, Trash } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 import axios from "axios";
@@ -16,7 +15,7 @@ const ExpenseListTable: React.FC<ExpenseListTableProps> = ({
   const deleteExpense = async (expense: IExpense) => {
     axios
       .delete(`/api/delete-expense/${expense._id}`)
-      .then((response) => {
+      .then(() => {
         toast("Expense Deleted !");
         refreshData()
       })
@@ -34,7 +33,7 @@ const ExpenseListTable: React.FC<ExpenseListTableProps> = ({
         <h2 className="font-bold">Date</h2>
         <h2 className="font-bold">Action</h2>
       </div>
-      {expensesList.map((expense, index) => (
+      {expensesList.map((expense) => (
         <div
           className="grid grid-cols-4 bg-slate-50 rounded-bl-xl rounded-br-xl p-2"
           key={String(expense._id)}

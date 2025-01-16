@@ -1,7 +1,7 @@
 "use client";
 import { RegisterSchema } from "@/schemas";
 import * as z from "zod";
-import { CardWrapper } from "@/components/auth/card-wrapper";
+import { CardWrapper } from "./card-wrapper";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";

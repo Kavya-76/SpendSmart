@@ -16,10 +16,10 @@ declare module 'next-auth'{
     }
 }
 
-export module 'next-auth/jwt'{
-    interface JWT {
-        _id: string;
-        isVerified: boolean;
-        username?: string;
-    }
-}
+// export module 'next-auth/jwt'{
+//     interface JWT {
+//         _id: string;
+//         isVerified: boolean;
+//         username?: string;
+//     }
+// }

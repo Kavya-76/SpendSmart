@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import IncomeModel from "@/models/Income";
 import { currentUserId } from "@/lib/auth";
 import mongoose from "mongoose";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
   await dbConnect();
 
   try {

@@ -1,4 +1,3 @@
-import * as z from "zod";
 import { RegisterSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/db";

@@ -7,8 +7,7 @@ import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook"
 import bcrypt from "bcryptjs";
-import { getUserById } from "./data/user";
-import UserModel, { IUser } from "./models/User";
+import UserModel from "./models/User";
 import dbConnect from "./lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -34,7 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials: any): Promise<any> => {
+      authorize: async (credentials: Partial<Record<"email" | "password", unknown>>): Promise<User | null> => {
         const validatedFields = LoginSchema.safeParse(credentials);
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
@@ -44,7 +43,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (passwordsMatch) {
-            return user;
+            const userWithValidId: User = {
+              ...user.toObject(), // Convert the MongoDB document to a plain object
+              _id: String(user._id), // Ensure _id is a string
+            };
+            return userWithValidId;
           }
         }
         return null;
@@ -56,24 +59,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (account?.provider !== "credentials") {
         try {
           await dbConnect();
-          const newUser: IUser = new UserModel({
-            name: user.name,
-            email: user.email,
-            isVerified: true,
-          });
-          await newUser.save(); // Save the new user to the database
+          let existingUser = await UserModel.findOne({ email: user.email });
+  
+          if (!existingUser) {
+            // Create a new user if it doesn't exist
+            const newUser = new UserModel({
+              name: user.name,
+              email: user.email,
+              isVerified: true, // OAuth users are typically considered verified
+            });
+            existingUser = await newUser.save();
+          }
+  
+          // Attach the user's database _id to the user object
+          // user._id = existingUser._id.toString();
+          user._id = String(existingUser._id);
         } catch (error) {
-          console.log(error);
+          console.error("Error during signIn:", error);
           return false;
         }
-        return true;
       }
-
-      const existingUser = await getUserById(user.id!);
-
-      // To provide email signin without email verification
-      if (!existingUser?.isVerified) return false;
-
+  
       return true;
     },
     async jwt({ token, user }) {

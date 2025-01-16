@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import BudgetItem from "../../budgets/_components/BudgetItem";
 import AddExpense from "../_components/AddExpense";
@@ -24,35 +24,38 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { IBudgetExtended } from "@/models/Budget";
+import { use } from "react"; // Add this import for React.use()
 
-interface ExpenseScreenProps {
-  params: {
-    id: string;
-  };
-}
-
-const ExpenseScreen = (
-  {params
+const ExpenseScreen = ({
+  params,
 }: {
-  params: Promise<{ budgetId: string }>
+  params: Promise<{ budgetId: string }>; // Ensure params is a Promise
 }) => {
   const user = useCurrentUser();
   const [budgetInfo, setBudgetInfo] = useState<IBudgetExtended | null>(null);
   const [expensesList, setExpensesList] = useState<IExpense[]>([]);
   const router = useRouter();
-  
-  const budgetId = React.use(params).budgetId
 
-  useEffect(() => {
-    if (user) {
-      getBudgetInfo();
+  // Use React.use() to unwrap the Promise and get the params
+  const { budgetId } = use(params); 
+
+  /**
+   * Get Latest Expenses
+   */
+  const getExpensesList = useCallback(async () => {
+    try {
+      const response = await axios.get(`/api/get-expenses/${budgetId}`);
+      const expenses = response.data;
+      setExpensesList(expenses);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
     }
-  }, [user]);
+  }, [budgetId]);
 
   /**
    * Get Budget Information
    */
-  const getBudgetInfo = async () => {
+  const getBudgetInfo = useCallback(async () => {
     try {
       const response = await axios.get(`/api/get-budget/${budgetId}`);
       const budget = response.data;
@@ -61,20 +64,7 @@ const ExpenseScreen = (
     } catch (error) {
       console.error("Error fetching budget info:", error);
     }
-  };
-
-  /**
-   * Get Latest Expenses
-   */
-  const getExpensesList = async () => {
-    try {
-      const response = await axios.get(`/api/get-expenses/${budgetId}`);
-      const expenses = response.data;
-      setExpensesList(expenses);
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-    }
-  };
+  }, [budgetId, getExpensesList]);
 
   /**
    * Delete Budget
@@ -89,6 +79,12 @@ const ExpenseScreen = (
       console.error("Error deleting budget:", error);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      getBudgetInfo();
+    }
+  }, [user, getBudgetInfo]);
 
   return (
     <div className="p-10">

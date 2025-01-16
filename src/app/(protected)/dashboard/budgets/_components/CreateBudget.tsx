@@ -42,7 +42,7 @@ const CreateBudget: React.FC<CreateBudgetProps> = ({ refreshData }) => {
           amount,
           description,
         })
-        .then((response) => {
+        .then(() => {
           refreshData(); // Call refreshData prop after budget creation
           toast("Budget Created Successfully");
         })
