@@ -54,10 +54,13 @@ export default function LoginForm() {
 
           if (data?.success) {
             form.reset();
-            setSuccess(data?.success); // TODO : add when we add 2FA
+            setSuccess(data?.success);
           }
         })
-        .catch(() => setError("Something went wrong"));
+        .catch((err) => {
+          console.log("Error: ",err);
+          setError("Something went wrong!")
+        })  
     });
   };
 
