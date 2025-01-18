@@ -10,6 +10,7 @@ import { FormSuccess } from "@/components/form-success";
 import { login } from "@/actions/login";
 import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
+import {useRouter} from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import {
@@ -21,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Social } from "./social";
+import { DEFAULT_LOGIN_DIRECT } from "@/routes";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
@@ -32,6 +34,7 @@ export default function LoginForm() {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -55,6 +58,7 @@ export default function LoginForm() {
           if (data?.success) {
             form.reset();
             setSuccess(data?.success);
+            router.push(DEFAULT_LOGIN_DIRECT);
           }
         })
         .catch((err) => {
