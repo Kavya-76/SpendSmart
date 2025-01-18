@@ -12,6 +12,8 @@ export default async function middleware(req: NextRequest) {
     secret: process.env.AUTH_SECRET, // Ensure this matches your Auth.js configuration
   });
 
+  console.log("Token from middleware:", token);
+
   const isLoggedIn = !!token;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
