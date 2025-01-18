@@ -10,6 +10,7 @@ export default async function middleware(req: NextRequest) {
   const token = await getToken({
     req,
     secret: process.env.AUTH_SECRET, // Ensure this matches your Auth.js configuration
+    secureCookie: true
   });
 
   console.log("Token from middleware:", token);
