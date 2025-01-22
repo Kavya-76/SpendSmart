@@ -56,7 +56,7 @@ const CreateBudget: React.FC<CreateBudgetProps> = ({ refreshData }) => {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <div className="bg-slate-100 p-10 rounded-2xl items-center flex flex-col border-2 border-dashed cursor-pointer hover:shadow-md">
+          <div className="bg-muted p-10 rounded-2xl items-center flex flex-col border-2 border-dashed cursor-pointer hover:shadow-md">
             <h2 className="text-3xl">+</h2>
             <h2>Create New Budget</h2>
           </div>

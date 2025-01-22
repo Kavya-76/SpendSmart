@@ -13,7 +13,7 @@ export default async function middleware(req: NextRequest) {
     secureCookie: true
   });
 
-  console.log("Token from middleware:", token);
+  // console.log("Token from middleware:", token);
 
   const isLoggedIn = !!token;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);

@@ -9,6 +9,7 @@ import {
 import { usePathname } from "next/navigation";
 import logo from "./public/logo.svg"
 import Link from "next/link";
+import { ModeToggle } from "@/app/_components/mode-toggle";
 function SideNav() {
   const menuList = [
     {
@@ -74,7 +75,8 @@ function SideNav() {
         className="fixed bottom-10 p-5 flex gap-2
             items-center"
       >
-        Currency Component
+        <ModeToggle/>
+        Toggle
       </div>
     </div>
   );

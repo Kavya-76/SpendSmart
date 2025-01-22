@@ -74,7 +74,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
   };
 
   return (
-    <div className="border p-5 rounded-2xl">
+    <div className="border p-5 rounded-2xl dark:text-white">
       <h2 className="font-bold text-lg">Add Expense</h2>
       <Button
         variant="outline"

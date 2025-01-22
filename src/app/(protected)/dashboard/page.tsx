@@ -13,51 +13,49 @@ import axios from "axios";
 
 const Dashboard: React.FC = () => {
   const user = useCurrentUser();
-
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [budgetList, setBudgetList] = useState<IBudgetExtended[]>([]);
   const [incomeList, setIncomeList] = useState<IIncome[]>([]);
   const [expensesList, setExpensesList] = useState<IExpense[]>([]);
 
-  // Fetch budget list and related data
-  const getBudgetList = useCallback(async () => {
-    try {
-      const response = await axios.get("/api/get-budgets");
-      setBudgetList(response.data);
-      await Promise.all([getIncomeList(), getAllExpenses()]);
-    } catch (error) {
-      console.error("Error fetching budgets:", error);
-    }
-  }, []); // Empty dependency array ensures this function is stable
-
-  // Fetch income list
-  const getIncomeList = async () => {
-    try {
-      const response = await axios.get("/api/get-incomes");
-      setIncomeList(response.data);
-    } catch (error) {
-      console.error("Error fetching incomes:", error);
-    }
-  };
-
-  // Fetch all expenses
-  const getAllExpenses = async () => {
-    try {
-      const response = await axios.get("/api/get-all-expenses");
-      setExpensesList(response.data);
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-    }
-  };
-
-  // Fetch data when user changes
   useEffect(() => {
-    if (user) {
-      getBudgetList();
+    if (user !== undefined) {
+      setIsLoadingUser(false);
     }
-  }, [user, getBudgetList]);
+  }, [user]);
+
+  const fetchAllData = useCallback(async () => {
+    try {
+      setIsLoadingData(true);
+      const [budgetsResponse, incomesResponse, expensesResponse] = await Promise.all([
+        axios.get("/api/get-budgets"),
+        axios.get("/api/get-incomes"),
+        axios.get("/api/get-all-expenses"),
+      ]);
+
+      setBudgetList(budgetsResponse.data);
+      setIncomeList(incomesResponse.data);
+      setExpensesList(expensesResponse.data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setIsLoadingData(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoadingUser && user) {
+      fetchAllData();
+    }
+  }, [isLoadingUser, user, fetchAllData]);
+
+  if (isLoadingUser || isLoadingData) {
+    return <p>Loading...</p>;
+  }
 
   return (
-    <div className="w-full p-8 bg-">
+    <div className="w-full p-8">
       <h2 className="font-bold text-4xl">Hi, {user?.name} 👋</h2>
       <p className="text-gray-500">
         Here&apos;s what&apos;s happening with your money. Let&apos;s manage your expenses.
@@ -71,7 +69,7 @@ const Dashboard: React.FC = () => {
 
           <ExpenseListTable
             expensesList={expensesList}
-            refreshData={getBudgetList}
+            refreshData={fetchAllData}
           />
         </div>
 

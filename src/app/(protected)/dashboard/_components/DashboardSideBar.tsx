@@ -6,7 +6,9 @@ import {
   PiggyBank,
   ReceiptText,
   CircleDollarSign,
+  CreditCard
 } from "lucide-react";
+import { ModeToggle } from "@/app/_components/mode-toggle";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -25,16 +27,22 @@ export function DashboardSidebar() {
       path: "/dashboard/incomes",
     },
     {
-      id: 2,
+      id: 3,
       name: "Budgets",
       icon: PiggyBank,
       path: "/dashboard/budgets",
     },
     {
-      id: 3,
+      id: 4,
       name: "Expenses",
       icon: ReceiptText,
       path: "/dashboard/expenses",
+    },
+    {
+      id: 5,
+      name: "Transactions",
+      icon: CreditCard,
+      path: "/dashboard/transactions",
     },
   ];
   const path = usePathname();
@@ -75,7 +83,7 @@ export function DashboardSidebar() {
           className="fixed bottom-10 p-5 flex gap-2
       items-center"
         >
-          {/* Currency Component */}
+          <ModeToggle/>
         </div>
       </div>
     </Sidebar>
