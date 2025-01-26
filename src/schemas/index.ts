@@ -58,12 +58,6 @@ export const ExpenseSchema = z.object({
   }),
   createdAt: z.optional(
     z.date()
-    // z
-    //   .string()
-    //   .refine((str) => !isNaN(Date.parse(str)), {
-    //     message: "Invalid date format",
-    //   })
-    //   .transform((str) => new Date(str))
   ),
 });
 
@@ -76,4 +70,21 @@ export const IncomeSchema = z.object({
   }),
   description: z.optional(z.string()),
   icon: z.optional(z.string()),
+  createdAt: z.optional(
+    z.date()
+  ),
+});
+
+export const EditItemSchema = z.object({
+  title: z.string({
+    message: "Title is required",
+  }),
+  amount: z.number().min(0, {
+    message: "Amount must be at least 0",
+  }),
+  description: z.optional(z.string()),
+  icon: z.optional(z.string()),
+  createdAt: z.optional(
+    z.date()
+  ),
 });

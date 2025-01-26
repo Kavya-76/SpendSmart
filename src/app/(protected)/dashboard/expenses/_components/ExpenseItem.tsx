@@ -15,7 +15,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({ expense }) => {
     : "";
 
   return (
-    <div className="p-5 border rounded-2xl hover:shadow-md cursor-pointer h-[170px]">
+    <div className="p-5 border bg-red-500/10 rounded-2xl hover:shadow-md cursor-pointer h-[170px]">
       <div className="flex gap-2 items-center justify-between">
         <div className="flex gap-2 items-center">
           <h2 className="text-2xl p-3 px-4 bg-slate-100 rounded-full">
@@ -26,7 +26,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({ expense }) => {
             <h2 className="text-sm text-gray-500">Date: {formattedDate}</h2>
           </div>
         </div>
-        <h2 className="font-bold text-primary text-lg">
+        <h2 className="font-bold text-red-500 text-lg">
         ₹{expense.amount.toLocaleString()}
         </h2>
       </div>

@@ -3,9 +3,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import formatNumber from "@/lib/formatNumber";
 import {
   PiggyBank,
-  ReceiptText,
   Wallet,
-  CircleDollarSign,
+  TrendingUp,
+  TrendingDownIcon,
+  ReceiptText
 } from "lucide-react";
 import { IBudgetExtended } from "@/models/Budget"; // Assuming this is the correct type
 import { IIncome } from "@/models/Income"; // Assuming this is the correct type
@@ -54,31 +55,38 @@ const CardInfo: React.FC<CardInfoProps> = ({ budgetList, incomeList }) => {
           <div className="mt-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <div className="p-7 border rounded-2xl flex items-center justify-between">
               <div>
-                <h2 className="text-sm">Total Budget</h2>
-                <h2 className="font-bold text-2xl">${formatNumber(totalBudget)}</h2>
+                <h2 className="text-sm">Income</h2>
+                <h2 className="font-bold text-2xl">${formatNumber(totalIncome)}</h2>
               </div>
-              <PiggyBank className="bg-blue-800 p-3 h-12 w-12 rounded-full text-white" />
+              <TrendingUp className="h-12 w-12 items-center rounded-lg p-2 text-emerald-500 bg-emerald-400/10" />
             </div>
             <div className="p-7 border rounded-2xl flex items-center justify-between">
               <div>
-                <h2 className="text-sm">Total Spend</h2>
+                <h2 className="text-sm">Spend</h2>
                 <h2 className="font-bold text-2xl">${formatNumber(totalSpend)}</h2>
               </div>
-              <ReceiptText className="bg-blue-800 p-3 h-12 w-12 rounded-full text-white" />
+              <TrendingDownIcon className="h-12 w-12 items-center rounded-lg p-2 text-red-500 bg-red-400/10" />
+            </div>
+            <div className="p-7 border rounded-2xl flex items-center justify-between">
+              <div>
+                <h2 className="text-sm">Balance</h2>
+                <h2 className="font-bold text-2xl">${formatNumber(totalIncome-totalSpend)}</h2>
+              </div>
+              <Wallet className="h-12 w-12 items-center rounded-lg p-2 text-violet-500 bg-violet-400/10" />
+            </div>
+            <div className="p-7 border rounded-2xl flex items-center justify-between">
+              <div>
+                <h2 className="text-sm">Total Budget</h2>
+                <h2 className="font-bold text-2xl">${formatNumber(totalBudget)}</h2>
+              </div>
+              <PiggyBank className="h-12 w-12 items-center rounded-lg p-2 text-blue-500 bg-blue-400/10" />
             </div>
             <div className="p-7 border rounded-2xl flex items-center justify-between">
               <div>
                 <h2 className="text-sm">No. Of Budget</h2>
                 <h2 className="font-bold text-2xl">{budgetList?.length}</h2>
               </div>
-              <Wallet className="bg-blue-800 p-3 h-12 w-12 rounded-full text-white" />
-            </div>
-            <div className="p-7 border rounded-2xl flex items-center justify-between">
-              <div>
-                <h2 className="text-sm">Sum of Income Streams</h2>
-                <h2 className="font-bold text-2xl">${formatNumber(totalIncome)}</h2>
-              </div>
-              <CircleDollarSign className="bg-blue-800 p-3 h-12 w-12 rounded-full text-white" />
+              <ReceiptText className="h-12 w-12 items-center rounded-lg p-2 text-gray-500 bg-gray-400/10" />
             </div>
           </div>
         </div>

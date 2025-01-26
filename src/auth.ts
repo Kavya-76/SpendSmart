@@ -87,6 +87,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.username = user.username;
+        token.createdAt = user.createdAt;
       }
       return token;
     },
@@ -95,6 +96,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user._id = token._id;
         session.user.isVerified = token.isVerified;
         session.user.username = token.username;
+        session.user.createdAt = token.createdAt;
       }
       return session;
     },

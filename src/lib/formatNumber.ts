@@ -18,3 +18,20 @@ const formatNumber = (num: number) => {
   };
   
   export default formatNumber;
+
+
+  const Currencies = [
+    { value: "USD", label: "$ Dollar", locale: "en-US" },
+    { value: "EUR", label: "€ Euro", locale: "de-DE" },
+    { value: "JPY", label: "¥ Yen", locale: "ja-JP" },
+    { value: "GBP", label: "£ Pound", locale: "en-GB" },
+  ];
+  
+  export function GetFormatterForCurrency(currency: string) {
+    const locale = Currencies.find((c) => c.value === currency)?.locale;
+  
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+    });
+  }

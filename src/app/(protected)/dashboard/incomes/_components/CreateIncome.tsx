@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DatePicker } from "@/components/ui/date-picker";
 import EmojiPicker from "emoji-picker-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ const CreateIncome: React.FC<CreateIncomeProps> = ({ refreshData }) => {
   const [description, setDescription] = useState<string>("");
 
   const [isPending, startTransition] = useTransition();
+  const [createdAt, setCreatedAt] = useState<Date | undefined>();
 
   const onCreateIncome = async () => {
     startTransition(() => {
@@ -124,6 +126,12 @@ const CreateIncome: React.FC<CreateIncomeProps> = ({ refreshData }) => {
                 value={description}
                 disabled={isPending}
               />
+            </div>
+            <div className="mt-2">
+              {/* <Label htmlFor="description" className="text-right">
+                Income Description
+              </Label> */}
+              <DatePicker date={createdAt} setDate={setCreatedAt} />
             </div>
           </div>
           <DialogFooter className="sm:justify-start">

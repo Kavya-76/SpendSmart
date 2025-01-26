@@ -1,18 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Loader } from "lucide-react";
 import React, { useState, useEffect, useTransition } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { DatePicker } from "@/components/ui/date-picker";
 import dynamic from "next/dynamic";
 
 // EmojiPicker and other client-specific imports remain dynamically loaded
@@ -56,11 +49,11 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
           createdAt: createdAt || new Date(),
         })
         .then(() => {
-        setTitle("");
-        setAmount(undefined);
-        setDescription("");
-        setCreatedAt(undefined);
-        setEmojiIcon("😊");
+          setTitle("");
+          setAmount(undefined);
+          setDescription("");
+          setCreatedAt(undefined);
+          setEmojiIcon("😊");
 
           refreshData();
           toast("Expense Created Successfully");
@@ -94,8 +87,11 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
         </div>
       )}
       <div className="mt-2">
-        <h2 className="text-black font-medium my-1">Expense Name</h2>
+        <Label htmlFor="title" className="text-right">
+          Expense Name
+        </Label>
         <Input
+          id="title"
           disabled={isPending}
           placeholder="e.g. Bedroom Decor"
           value={title}
@@ -103,8 +99,11 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
         />
       </div>
       <div className="mt-2">
-        <h2 className="text-black font-medium my-1">Expense Amount</h2>
+        <Label htmlFor="amount" className="text-right">
+          Expense Amount
+        </Label>
         <Input
+          id="amount"
           disabled={isPending}
           type="number"
           placeholder="e.g. 1000"
@@ -115,8 +114,11 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
         />
       </div>
       <div className="mt-2">
-        <h2 className="text-black font-medium my-1">Expense Description</h2>
+        <Label htmlFor="description" className="text-right">
+          Expense Description
+        </Label>
         <Input
+          id="description"
           placeholder="Add a description (optional)"
           disabled={isPending}
           value={description}
@@ -124,29 +126,12 @@ const AddExpense: React.FC<AddExpenseProps> = ({ budgetId, refreshData }) => {
         />
       </div>
       <div className="mt-2">
-        <h2 className="text-black font-medium my-1">Expense Date</h2>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[280px] justify-start text-left font-normal",
-                !createdAt && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {createdAt ? format(createdAt, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={createdAt}
-              onSelect={setCreatedAt}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+        <Label htmlFor="date" className="text-right">
+          Expense Date
+        </Label>
+        <div id="date">
+          <DatePicker date={createdAt} setDate={setCreatedAt} />
+        </div>
       </div>
       <Button
         disabled={!(title && amount) || isPending}

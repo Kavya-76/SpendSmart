@@ -1,23 +1,37 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import * as React from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
-export function DatePickerDemo() {
-  const [date, setDate] = React.useState<Date>()
+interface DatePickerProps {
+  date: Date | undefined;
+  setDate: (date: Date | undefined) => void;
+}
+
+export const DatePicker: React.FC<DatePickerProps> = ({ date, setDate }) => {
+  const [open, setOpen] = React.useState(false);
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+    setOpen(false); // Close the popover after selecting a date
+  };
+
+  const handlePopoverContentClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent clicks inside the calendar from closing the popover
+  };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -30,14 +44,17 @@ export function DatePickerDemo() {
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent
+        className="w-auto p-0"
+        onClick={handlePopoverContentClick} // Ensure interactions inside the calendar don't close the popover
+      >
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={handleDateSelect}
           initialFocus
         />
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};

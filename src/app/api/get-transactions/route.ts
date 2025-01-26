@@ -20,14 +20,11 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  console.log(fromDate);
-  console.log(toDate);
-
   try {
     const userId = await currentUserId(); // Get the current user's ID
     if (!userId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "User not authenticated" },
         { status: 401 }
       );
     }
@@ -41,7 +38,7 @@ export const GET = async (req: NextRequest) => {
           $lte: new Date(toDate),
         },
       })
-        .select("title amount createdAt")
+        .select("icon title amount description createdAt")
         .lean(),
 
       ExpenseModel.find({
@@ -51,7 +48,7 @@ export const GET = async (req: NextRequest) => {
           $lte: new Date(toDate),
         },
       })
-        .select("title amount createdAt")
+        .select("icon title amount description createdAt")
         .lean(),
     ]);
 
