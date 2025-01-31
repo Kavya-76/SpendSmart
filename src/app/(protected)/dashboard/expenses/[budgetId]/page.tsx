@@ -44,7 +44,7 @@ const ExpenseScreen = ({
    */
   const getExpensesList = useCallback(async () => {
     try {
-      const response = await axios.get(`/api/get-expenses/${budgetId}`);
+      const response = await axios.get(`/api/get-budget-expenses/${budgetId}`);
       const expenses = response.data;
       setExpensesList(expenses);
     } catch (error) {

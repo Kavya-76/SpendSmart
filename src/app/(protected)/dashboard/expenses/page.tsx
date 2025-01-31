@@ -8,6 +8,9 @@ import ExpenseChart from "./_components/ExpenseChart";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { startOfMonth } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { Terminal } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface GroupedExpense {
   createdAt: string;
@@ -34,7 +37,7 @@ const ExpensesPage: React.FC = () => {
     setLoading(true);
     setError(null);
     await axios
-      .get<IExpense[]>("/api/get-all-expenses", {
+      .get<IExpense[]>("/api/get-expenses", {
         params: {
           fromDate: dateRange.from?.toISOString(),
           toDate: dateRange.to?.toISOString(),
@@ -96,6 +99,13 @@ const ExpensesPage: React.FC = () => {
         />
       </div>
       <ExpenseChart groupedExpenses={groupExpensesByDate} />
+      <Alert>
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>Add Expense!</AlertTitle>
+        <AlertDescription>
+          You can add expenses by selecting a budget in Budget&apos;s section.
+        </AlertDescription>
+      </Alert>
       <ExpenseList filteredExpenses={expensesList} />
     </div>
   );

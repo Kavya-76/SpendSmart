@@ -17,7 +17,7 @@ interface BudgetItemProps {
 
 const BarChartDashboard: React.FC<BudgetItemProps> = ({ budgetList }) => {
   return (
-    <div className="border rounded-2xl p-5">
+    <div className="border rounded-2xl p-5 mt-5">
       <h2 className="font-bold text-lg">Activity</h2>
       <ResponsiveContainer width="80%" height={300}>
         <BarChart
