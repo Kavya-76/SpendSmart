@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import EditItem from "../../_components/EditItem";
 import DeleteItem from "../../_components/DeleteItem";
 import axios from "axios";
@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, ViewIcon } from "lucide-react";
+import { ChevronDown, ViewIcon, DownloadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -30,8 +30,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import {GetFormatterForCurrency} from "@/lib/formatNumber";
 import { DataTableColumnHeader } from "@/components/data-table/ColumnHeader";
+import { download, generateCsv, mkConfig } from "export-to-csv";
 
 // Transaction type definition
 export type Transactions = {
@@ -41,7 +42,7 @@ export type Transactions = {
   title: string;
   description: string;
   type: string;
-  createdAt: Date; 
+  createdAt: Date;
 };
 
 // Table column definitions
@@ -91,7 +92,7 @@ export const columns: ColumnDef<Transactions>[] = [
       const amount = parseFloat(row.getValue("amount"));
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
-        currency: "USD",
+        currency: "INR",
       }).format(amount);
 
       return (
@@ -108,6 +109,12 @@ export const columns: ColumnDef<Transactions>[] = [
   },
 ];
 
+const csvConfig = mkConfig({
+  fieldSeparator: ",",
+  decimalSeparator: ".",
+  useKeysAsHeaders: true,
+});
+
 interface TransactionTableProps {
   from: Date;
   to: Date;
@@ -118,16 +125,25 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ from, to }) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [transactions, setTransactions] = useState<Transactions[]>([]);
 
+  const userCurrency = "INR";
+    const formatter = useMemo(
+      () => GetFormatterForCurrency(userCurrency),
+      [userCurrency]
+    );
+
   // Fetch transactions whenever the `from` or `to` props change
   useEffect(() => {
     const getTransactions = async () => {
       try {
-        const response = await axios.get<Transactions[]>("/api/get-transactions", {
-          params: {
-            fromDate: from.toISOString(),
-            toDate: to.toISOString(),
-          },
-        });
+        const response = await axios.get<Transactions[]>(
+          "/api/get-transactions",
+          {
+            params: {
+              fromDate: from.toISOString(),
+              toDate: to.toISOString(),
+            },
+          }
+        );
         setTransactions(response.data);
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -138,6 +154,22 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ from, to }) => {
       getTransactions();
     }
   }, [from, to]);
+
+  const handleExportCSV = (data: Array<{ 
+    type: string; 
+    title: string; 
+    amount: string; 
+    date: string; // Convert Date to string
+    description: string; 
+  }>) => {
+    const formattedData = data.map(item => ({
+      ...item,
+      date: new Date(item.date).toLocaleDateString(), // Convert Date to readable string
+    }));
+  
+    const csv = generateCsv(csvConfig)(formattedData);
+    download(csvConfig)(csv);
+  };
 
   const table = useReactTable({
     data: transactions,
@@ -154,7 +186,31 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ from, to }) => {
 
   return (
     <div className="w-full p-5">
-      <div className="flex items-center py-4">
+      <div className="flex flex-wrap items-center justify-between py-4">
+        <div>
+          {/* Filter component */}
+        </div>
+        <div className="flex items-center justify-between gap-3">
+
+        
+        <Button
+          variant={"outline"}
+          size={"sm"}
+          className="ml-auto h-8 lg:flex"
+          onClick={() => {
+            const data = table.getFilteredRowModel().rows.map((row) => ({
+              type: row.original.type,
+              title: row.original.title,
+              amount: formatter.format(row.original.amount),
+              date: row.original.createdAt.toString(),
+              description: row.original.description,
+            }));
+            handleExportCSV(data);
+          }}
+        >
+          <DownloadIcon className="mr-2 h-4 w-4" />
+          Export CSV
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -171,15 +227,14 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ from, to }) => {
                   key={column.id}
                   className="capitalize"
                   checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
                   {column.id}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -208,7 +263,10 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ from, to }) => {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -232,7 +290,9 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ from, to }) => {
 
 export default TransactionTable;
 
-const RowActions: React.FC<{ transaction: Transactions }> = ({ transaction }) => {
+const RowActions: React.FC<{ transaction: Transactions }> = ({
+  transaction,
+}) => {
   return (
     <div className="flex items-center justify-evenly">
       <EditItem Info={transaction} refreshData={() => {}} />

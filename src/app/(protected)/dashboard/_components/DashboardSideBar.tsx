@@ -1,18 +1,30 @@
 import { Sidebar } from "@/components/ui/sidebar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   LayoutGrid,
   PiggyBank,
   ReceiptText,
   CircleDollarSign,
-  CreditCard
+  CreditCard,
 } from "lucide-react";
-import { ModeToggle } from "@/app/_components/mode-toggle";
+import UserButton from "@/app/_components/user-button";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useTheme } from "next-themes";
+
 
 export function DashboardSidebar() {
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const path = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = theme === "system" ? systemTheme : theme;
+
   const menuList = [
     {
       id: 1,
@@ -45,33 +57,47 @@ export function DashboardSidebar() {
       path: "/dashboard/transactions",
     },
   ];
-  const path = usePathname();
 
-  useEffect(() => {
-    console.log(path);
-  }, [path]);
   return (
     <Sidebar>
       <div className="h-screen p-5 border shadow-sm">
+        {/* Logo Section */}
         <div className="flex flex-row items-center">
           <Link href="/">
-            <Image src="/logo.svg" alt="logo" width={40} height={25} />
+            {mounted ? (
+              <Image
+                src={
+                  currentTheme === "dark"
+                    ? "/SpendSmart Logo White.jpg"
+                    : "/SpendSmart Logo Black.jpg"
+                }
+                alt="logo"
+                width={40}
+                height={25}
+              />
+            ) : (
+              <Image
+                src="/SpendSmart Logo Black.jpg"
+                alt="logo"
+                width={40}
+                height={25}
+              />
+            )}
           </Link>
-          <span className="text-blue-800 font-bold text-xl ml-2">
+          <span className="text-primary font-bold text-xl ml-2">
             SpendSmart
           </span>
         </div>
+
+        {/* Menu List */}
         <div className="mt-5">
-          {menuList.map((menu, index) => (
-            <Link href={menu.path} key={index}>
+          {menuList.map((menu) => (
+            <Link href={menu.path} key={menu.id}>
               <h2
-                className={`flex gap-2 items-center
-              text-gray-500 font-medium
-              mb-2
-              p-4 cursor-pointer rounded-full
-              hover:text-primary hover:bg-blue-100
-              ${path == menu.path && "text-primary bg-blue-100"}
-              `}
+                className={`flex gap-2 items-center text-gray-500 font-medium mb-2 p-4 cursor-pointer rounded-full
+                  hover:text-primary hover:bg-slate-300 dark:hover:bg-gray-600
+                  ${path === menu.path ? "text-primary bg-slate-300 dark:bg-gray-600" : ""}
+                `}
               >
                 <menu.icon />
                 {menu.name}
@@ -79,11 +105,10 @@ export function DashboardSidebar() {
             </Link>
           ))}
         </div>
-        <div
-          className="fixed bottom-10 p-5 flex gap-2
-      items-center"
-        >
-          <ModeToggle/>
+
+        {/* Mode Toggle */}
+        <div className="fixed bottom-10 p-5 flex gap-2 items-center">
+          <UserButton/>
         </div>
       </div>
     </Sidebar>

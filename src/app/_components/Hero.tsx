@@ -9,7 +9,7 @@ function Hero() {
         <ContainerScroll
           titleComponent={
             <>
-              <h1 className="text-4xl font-semibold text-black dark:text-white">
+              <h1 className="text-4xl font-semibold text-black">
                 Manage your Money with Personal <br />
                 <span className="text-4xl md:text-[6rem] text-blue-800 font-bold mt-1 leading-none">
                   Finance Tracker

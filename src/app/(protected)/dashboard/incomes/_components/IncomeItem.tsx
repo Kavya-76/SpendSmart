@@ -1,5 +1,6 @@
-import React from "react";
+import React,{useMemo} from "react";
 import { IIncome } from "@/models/Income"; // Import your IBudget interface
+import { GetFormatterForCurrency } from "@/lib/formatNumber";
 
 interface IncomeItemProps {
   income: IIncome;
@@ -14,6 +15,12 @@ const IncomeItem: React.FC<IncomeItemProps> = ({ income }) => {
       })
     : "";
 
+    const userCurrency = "INR";
+      const formatter = useMemo(
+        () => GetFormatterForCurrency(userCurrency),
+        [userCurrency]
+      );
+
   return (
     <div className="p-5 border bg-emerald-500/10 rounded-2xl hover:shadow-md cursor-pointer h-[170px]">
       <div className="flex gap-2 items-center justify-between">
@@ -27,7 +34,7 @@ const IncomeItem: React.FC<IncomeItemProps> = ({ income }) => {
           </div>
         </div>
         <h2 className="font-bold text-emerald-500 text-lg">
-        ₹{income.amount.toLocaleString()}
+        {formatter.format(income.amount)}
         </h2>
       </div>
 

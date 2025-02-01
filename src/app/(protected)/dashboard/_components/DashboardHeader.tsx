@@ -1,8 +1,8 @@
 import React from "react";
-import UserButton from "@/app/_components/user-button";
 import { Toggle } from "@/components/ui/toggle";
 import { useSidebar } from "@/components/ui/sidebar";
 import {HamburgerMenuIcon} from "@radix-ui/react-icons"
+import { ModeToggle } from "@/app/_components/mode-toggle";
 
 function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
@@ -12,7 +12,7 @@ function DashboardHeader() {
         <Toggle onClick={toggleSidebar} ><HamburgerMenuIcon/></Toggle>
       </div>
       <div>
-        <UserButton />
+        <ModeToggle/>
       </div>
     </div>
   );

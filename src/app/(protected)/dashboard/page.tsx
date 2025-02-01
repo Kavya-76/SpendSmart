@@ -8,6 +8,7 @@ import { DateRange } from "react-day-picker";
 import axios from "axios";
 import { startOfMonth } from "date-fns";
 import History from "./_components/History";
+import SkeletonWrapper from "@/components/skeleton-wrapper";
 
 const Dashboard: React.FC = () => {
   const user = useCurrentUser();
@@ -41,7 +42,6 @@ const Dashboard: React.FC = () => {
           toDate: dateRange.to?.toISOString(),
         },
       });
-      console.log("Data",response.data)
       setTotalBudgets(response.data.totalBudgets);
       setTotalBudgetAmount(response.data.totalBudgetAmount);
       setTotalIncomeAmount(response.data.totalIncomeAmount);
@@ -60,9 +60,9 @@ const Dashboard: React.FC = () => {
     }
   }, [isLoadingUser, user, dateRange, fetchAllData]);
 
-  if (isLoadingUser || isLoadingData) {
-    return <p>Loading...</p>;
-  }
+  // if (isLoadingUser || isLoadingData) {
+  //   return <p>Loading...</p>;
+  // }
 
   return (
     <div className="w-full p-8">
@@ -70,7 +70,8 @@ const Dashboard: React.FC = () => {
         <div>
           <h2 className="font-bold text-4xl">Hi, {user?.name} 👋</h2>
           <p className="text-gray-500">
-            Here&apos;s what&apos;s happening with your money. Let&apos;s manage your expenses.
+            Here&apos;s what&apos;s happening with your money. Let&apos;s manage
+            your expenses.
           </p>
         </div>
         <div>
@@ -87,13 +88,14 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <CardInfo
-        totalBudgets={totalBudgets}
-        totalBudgetAmount={totalBudgetAmount}
-        totalExpenseAmount={totalExpenseAmount}
-        totalIncomeAmount={totalIncomeAmount}
-      />
-
+      <SkeletonWrapper isLoading={isLoadingData || isLoadingUser} >
+        <CardInfo
+          totalBudgets={totalBudgets}
+          totalBudgetAmount={totalBudgetAmount}
+          totalExpenseAmount={totalExpenseAmount}
+          totalIncomeAmount={totalIncomeAmount}
+        />
+      </SkeletonWrapper>
       <div>
         <History />
       </div>

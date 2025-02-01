@@ -79,10 +79,10 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({ groupedExpenses }) => {
                   dataKey="price"
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value: number) => `₹${value}`}
+                  tickFormatter={(value: number) => `${value}`}
                 />
                 <Tooltip
-                  formatter={(value: number | string) => `₹${value}`}
+                  formatter={(value: number | string) => `${value}`}
                   labelFormatter={(label: string) => {
                     const date = new Date(label);
                     return date.toLocaleDateString("en-US", {
